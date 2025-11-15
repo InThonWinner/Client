@@ -1,7 +1,7 @@
 .landing-container {
     width: 100%;
     min-height: 100vh;
-    background: linear-gradient(270deg, rgba(134, 38, 51, 1) 0%, rgba(255, 173, 185, 0.7) 100%);
+    background: linear-gradient(135deg, rgba(255, 173, 185, 0.7) 0%, rgba(134, 38, 51, 1) 100%);
     position: relative;
     margin: 0 auto;
     display: flex;
@@ -84,18 +84,22 @@
 .main-content {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    padding: 40px 5%;
+    align-items: center;
+    padding: 60px 5%;
     margin-top: 40px;
     flex: 1;
     flex-wrap: wrap;
-    gap: 40px;
+    gap: 60px;
+    min-height: calc(100vh - 200px);
 }
 
 .content-left {
     flex: 1;
     min-width: 300px;
     max-width: 698px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .main-title {
@@ -105,19 +109,21 @@
     line-height: 1.2102272033691406em;
     color: #862633;
     margin-bottom: 48px;
-    width: 482px;
-    height: 96px;
+    width: 100%;
+    max-width: 482px;
+    height: auto;
 }
 
 .subtitle {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     font-size: 24px;
-    line-height: 1.2102272510528564em;
+    line-height: 1.8em;
     color: #FFFFFF;
-    margin-bottom: 187px;
-    width: 698px;
-    height: 78px;
+    margin-bottom: 60px;
+    width: 100%;
+    max-width: 698px;
+    height: auto;
 }
 
 .primary-button {
@@ -136,6 +142,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 auto;
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
@@ -154,12 +161,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 300px;
 }
 
 .emblem-img {
-    width: 340px;
-    height: 481px;
-    object-fit: cover;
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    object-fit: contain;
 }
 
 /* Responsive Design */
@@ -168,23 +177,40 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
+        padding: 40px 5%;
+        min-height: auto;
     }
     
     .content-left {
         width: 100%;
         max-width: 698px;
+        align-items: center;
     }
     
     .main-title {
         width: 100%;
+        max-width: 100%;
         height: auto;
         margin-bottom: 30px;
+        text-align: center;
     }
     
     .subtitle {
         width: 100%;
+        max-width: 100%;
         height: auto;
+        line-height: 1.8em;
         margin-bottom: 50px;
+        text-align: center;
+    }
+    
+    .content-right {
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .emblem-img {
+        max-width: 300px;
     }
 }
 
@@ -196,7 +222,7 @@
     .header {
         flex-direction: column;
         gap: 20px;
-        padding: 20px;
+        padding: 20px 5%;
     }
     
     .nav {
@@ -205,20 +231,62 @@
     }
     
     .main-content {
-        margin-top: 40px;
+        margin-top: 20px;
+        padding: 30px 5%;
+        gap: 40px;
     }
     
     .main-title {
         font-size: 28px;
+        margin-bottom: 24px;
     }
     
     .subtitle {
         font-size: 18px;
+        line-height: 1.8em;
+        margin-bottom: 40px;
+    }
+    
+    .primary-button {
+        width: 160px;
+        height: 60px;
+        font-size: 20px;
+        padding: 16px 12px;
+    }
+    
+    .content-right {
+        width: 100%;
+        max-width: 250px;
     }
     
     .emblem-img {
-        width: 250px;
-        height: auto;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-title {
+        font-size: 24px;
+    }
+    
+    .subtitle {
+        font-size: 16px;
+        line-height: 1.8em;
+    }
+    
+    .primary-button {
+        width: 140px;
+        height: 50px;
+        font-size: 18px;
+        padding: 12px 10px;
+    }
+    
+    .logo-text {
+        font-size: 20px;
+    }
+    
+    .nav-link {
+        font-size: 14px;
     }
 }
 
