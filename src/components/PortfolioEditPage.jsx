@@ -149,75 +149,81 @@ function PortfolioEditPage() {
         </div>
       )}
 
-      {/* Left Profile Section */}
-      <div className="profile-section">
-        {/* Profile Image */}
-        <div className="profile-image-container">
-          <div className="profile-circle-bg"></div>
-          <img src="/images/profile.png" alt="Profile" className="profile-image" />
+      {/* Top Section - Profile and Name/Company */}
+      <div className="top-section">
+        {/* Left Profile Section */}
+        <div className="profile-section">
+          {/* Profile Image */}
+          <div className="profile-image-container">
+            <div className="profile-circle-bg"></div>
+            <img src="/images/profile.png" alt="Profile" className="profile-image" />
+          </div>
+        </div>
+
+        {/* Name and Company Section */}
+        <div className="name-company-section">
+          {/* Name */}
+          <h1 className="profile-name">{userName}</h1>
+
+          {/* Company/Where */}
+          <div className="where-input">
+            <input 
+              type="text" 
+              value={where} 
+              className="where-text"
+              onChange={(e) => setWhere(e.target.value)}
+            />
+          </div>
+
+          {/* Contact Info */}
+          <div className="contact-info">
+            <div className="contact-item email">
+              <svg className="contact-icon" width="32" height="25" viewBox="0 0 32 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 4C0 1.79086 1.79086 0 4 0H28C30.2091 0 32 1.79086 32 4V21C32 23.2091 30.2091 25 28 25H4C1.79086 25 0 23.2091 0 21V4Z" fill="white"/>
+                <path d="M16 13L4 6V21H28V6L16 13Z" fill="#862633"/>
+              </svg>
+            </div>
+            <div className="contact-item phone">
+              <svg className="contact-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.5 2C4.01472 2 2 4.01472 2 6.5V23.5C2 25.9853 4.01472 28 6.5 28H23.5C25.9853 28 28 25.9853 28 23.5V6.5C28 4.01472 25.9853 2 23.5 2H6.5Z" stroke="white" strokeWidth="0.49"/>
+                <path d="M9 9L15 15L21 9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className="contact-item github">
+              <svg className="contact-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="15" cy="15" r="14" fill="white"/>
+                <path d="M15 8C11.134 8 8 11.134 8 15C8 18.866 11.134 22 15 22C18.866 22 22 18.866 22 15C22 11.134 18.866 8 15 8Z" fill="#862633"/>
+              </svg>
+            </div>
+            <div className="contact-item linkedin">
+              <svg className="contact-icon" width="85" height="24" viewBox="0 0 85 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 3.72H9.35V20.47H0V3.72Z" fill="white"/>
+                <path d="M10.72 3.2H14.42V7.25H10.72V3.2Z" fill="white"/>
+                <path d="M10.99 9.3H14.39V20.47H10.99V9.3Z" fill="white"/>
+                <path d="M16.09 3.72H38.19V7.25H16.09V3.72Z" fill="white"/>
+                <path d="M37.34 3.72H60.29V7.25H37.34V3.72Z" fill="white"/>
+                <path d="M63.69 0H84.94V24.19H63.69V0Z" fill="white"/>
+              </svg>
+            </div>
+          </div>
+
+          {/* Additional Info Fields */}
+          <div className="info-fields">
+            {infoFields.map((value, index) => (
+              <input
+                key={index}
+                type="text"
+                className="info-field"
+                placeholder=""
+                value={value}
+                onChange={(e) => handleInfoFieldChange(index, e.target.value)}
+                onFocus={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.9)'}
+                onBlur={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.7)'}
+              />
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Name - positioned separately */}
-      <h1 className="profile-name">{userName}</h1>
-
-      {/* Contact Info */}
-      <div className="contact-info">
-          <div className="contact-item email">
-            <svg className="contact-icon" width="32" height="25" viewBox="0 0 32 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 4C0 1.79086 1.79086 0 4 0H28C30.2091 0 32 1.79086 32 4V21C32 23.2091 30.2091 25 28 25H4C1.79086 25 0 23.2091 0 21V4Z" fill="white"/>
-              <path d="M16 13L4 6V21H28V6L16 13Z" fill="#862633"/>
-            </svg>
-          </div>
-          <div className="contact-item phone">
-            <svg className="contact-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.5 2C4.01472 2 2 4.01472 2 6.5V23.5C2 25.9853 4.01472 28 6.5 28H23.5C25.9853 28 28 25.9853 28 23.5V6.5C28 4.01472 25.9853 2 23.5 2H6.5Z" stroke="white" strokeWidth="0.49"/>
-              <path d="M9 9L15 15L21 9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <div className="contact-item github">
-            <svg className="contact-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="15" cy="15" r="14" fill="white"/>
-              <path d="M15 8C11.134 8 8 11.134 8 15C8 18.866 11.134 22 15 22C18.866 22 22 18.866 22 15C22 11.134 18.866 8 15 8Z" fill="#862633"/>
-            </svg>
-          </div>
-          <div className="contact-item linkedin">
-            <svg className="contact-icon" width="85" height="24" viewBox="0 0 85 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 3.72H9.35V20.47H0V3.72Z" fill="white"/>
-              <path d="M10.72 3.2H14.42V7.25H10.72V3.2Z" fill="white"/>
-              <path d="M10.99 9.3H14.39V20.47H10.99V9.3Z" fill="white"/>
-              <path d="M16.09 3.72H38.19V7.25H16.09V3.72Z" fill="white"/>
-              <path d="M37.34 3.72H60.29V7.25H37.34V3.72Z" fill="white"/>
-              <path d="M63.69 0H84.94V24.19H63.69V0Z" fill="white"/>
-            </svg>
-          </div>
-        </div>
-
-      {/* Company/Where */}
-        <div className="where-input">
-          <input 
-            type="text" 
-            value={where} 
-            className="where-text"
-            onChange={(e) => setWhere(e.target.value)}
-          />
-        </div>
-
-        {/* Additional Info Fields */}
-        <div className="info-fields">
-          {infoFields.map((value, index) => (
-            <input
-              key={index}
-              type="text"
-              className="info-field"
-              placeholder=""
-              value={value}
-              onChange={(e) => handleInfoFieldChange(index, e.target.value)}
-              onFocus={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.9)'}
-              onBlur={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.7)'}
-            />
-          ))}
-        </div>
 
       {/* Right Content Sections */}
       <div className="content-sections">

@@ -1,19 +1,19 @@
 .portfolio-edit-container {
-    width: 1440px;
-    max-width: 100%;
-    min-height: 1024px;
+    width: 100%;
+    max-width: 1440px;
+    min-height: 100vh;
     background: #862633;
     position: relative;
     margin: 0 auto;
-    padding: 146px 204px 0 166px;
+    padding: 100px 5% 40px 5%;
     box-sizing: border-box;
 }
 
 /* Save Button */
 .save-button {
-    position: absolute;
-    top: 146px;
-    right: 204px;
+    position: fixed;
+    top: 20px;
+    right: 5%;
     font-family: 'Raleway', sans-serif;
     font-weight: 400;
     font-size: 16px;
@@ -26,21 +26,27 @@
     width: 36px;
     height: 24px;
     transition: opacity 0.3s ease;
-    z-index: 10;
+    z-index: 100;
 }
 
 .save-button:hover {
     opacity: 1;
 }
 
-/* Profile Section */
-.profile-section {
-    position: absolute;
-    left: 166px;
-    top: 173px;
-    width: 220px;
+/* Top Section - Profile and Name/Company */
+.top-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
 }
 
+/* Profile Section */
+.profile-section {
+    flex: 0 0 auto;
+    width: 220px;
+}
 
 .profile-image-container {
     position: relative;
@@ -70,6 +76,15 @@
     z-index: 1;
 }
 
+/* Name and Company Section */
+.name-company-section {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .profile-name {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
@@ -77,44 +92,22 @@
     line-height: 1.210227288140191em;
     color: #FFFFFF;
     margin: 0;
-    width: 125px;
-    height: 54px;
-    position: absolute;
-    left: 486px; /* Absolute position from container */
-    top: 176px; /* Absolute position from container */
+    width: auto;
+    height: auto;
 }
 
 .contact-info {
-    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
     width: 100%;
-    height: 200px;
+    margin-top: 20px;
 }
 
 .contact-item {
     display: flex;
     align-items: center;
-    position: absolute;
-}
-
-/* Contact icons positioned absolutely relative to container */
-.contact-item.email {
-    left: 579px; /* Absolute position from container */
-    top: 251px; /* Absolute position from container */
-}
-
-.contact-item.phone {
-    left: 958px; /* Absolute position from container */
-    top: 300px; /* Absolute position from container */
-}
-
-.contact-item.github {
-    left: 494px; /* Absolute position from container */
-    top: 324px; /* Absolute position from container */
-}
-
-.contact-item.linkedin {
-    left: 526px; /* Absolute position from container */
-    top: 306px; /* Absolute position from container */
+    justify-content: flex-start;
 }
 
 .contact-icon {
@@ -123,15 +116,13 @@
 
 /* Where Input */
 .where-input {
-    width: 601px;
+    width: 100%;
+    max-width: 601px;
     height: 44px;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 10px;
     padding: 10px 22px;
     margin-bottom: 15px;
-    position: absolute;
-    left: 635px; /* Absolute position from container */
-    top: 180px; /* Absolute position from container */
     box-sizing: border-box;
 }
 
@@ -153,18 +144,16 @@
 
 /* Info Fields */
 .info-fields {
-    position: absolute;
-    left: 635px; /* Absolute position from container */
-    top: 239px; /* Absolute position from container */
     display: grid;
-    grid-template-columns: 241px 241px;
-    grid-template-rows: 44px 44px;
+    grid-template-columns: repeat(2, 1fr);
     gap: 19px;
-    width: 601px;
+    width: 100%;
+    max-width: 601px;
+    margin-bottom: 40px;
 }
 
 .info-field {
-    width: 241px;
+    width: 100%;
     height: 44px;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 10px;
@@ -184,23 +173,22 @@
 
 /* Content Sections */
 .content-sections {
-    position: absolute;
-    left: 204px; /* Absolute position from container */
-    top: 423px; /* Absolute position from container */
-    width: 1032px;
+    width: 100%;
+    margin-top: 40px;
 }
 
 .section-card {
-    width: 480px;
+    width: 100%;
+    max-width: 480px;
     background: transparent;
     border-radius: 10px;
     padding: 0;
     position: relative;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
 }
 
 .section-card.full-width {
-    width: 1032px;
+    max-width: 100%;
 }
 
 .section-header {
@@ -289,26 +277,15 @@
 
 /* Bottom sections row */
 .bottom-sections-row {
-    display: flex;
-    gap: 74px; /* 758 - 204 - 480 = 74 */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
     width: 100%;
-    position: relative;
 }
 
 .bottom-sections-row .section-card {
-    flex: 0 0 480px;
-}
-
-/* 프로젝트 section at x: 204 */
-.bottom-sections-row .section-card:first-child {
-    position: absolute;
-    left: 0;
-}
-
-/* 활동 및 수상 경력 section at x: 758 */
-.bottom-sections-row .section-card:last-child {
-    position: absolute;
-    left: 554px; /* 758 - 204 */
+    max-width: 100%;
+    width: 100%;
 }
 
 @keyframes fadeIn {
@@ -323,92 +300,100 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1440px) {
-    .portfolio-edit-container {
-        width: 100%;
-        padding: 100px 5% 0 5%;
-    }
-
-    .save-button {
-        right: 5%;
-        top: 100px;
-    }
-
-    .profile-section {
-        position: static;
-        margin: 0 auto 40px;
-        width: 100%;
-        max-width: 400px;
-    }
-
-    .profile-name {
-        position: static;
-        margin: 20px auto;
-        text-align: center;
-    }
-
-    .contact-info {
-        position: static;
-        height: auto;
-        margin: 20px auto;
-        width: 100%;
-        max-width: 600px;
-    }
-
-    .contact-item {
-        position: static;
-        margin: 10px;
-    }
-
-    .where-input {
-        position: static;
-        width: 100%;
-        max-width: 601px;
-        margin: 20px auto 15px;
-    }
-
-    .info-fields {
-        position: static;
-        width: 100%;
-        max-width: 601px;
-        margin: 0 auto;
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .info-field {
-        width: 100%;
-    }
-
-    .content-sections {
-        position: static;
-        width: 100%;
-        margin-top: 40px;
-    }
-
-    .section-card {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .section-card.full-width {
-        width: 100%;
-    }
-
+@media (max-width: 1200px) {
     .bottom-sections-row {
-        flex-direction: column;
+        grid-template-columns: 1fr;
         gap: 20px;
     }
-
+    
     .bottom-sections-row .section-card {
-        position: static;
-        flex: 1;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .top-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .name-company-section {
         width: 100%;
+        align-items: center;
+    }
+    
+    .contact-info {
+        max-width: 500px;
+        margin: 20px auto 0;
+    }
+    
+    .where-input {
+        margin: 0 auto 15px;
+    }
+    
+    .info-fields {
+        margin: 0 auto 40px;
     }
 }
 
 @media (max-width: 768px) {
     .portfolio-edit-container {
         padding: 80px 20px 40px 20px;
+    }
+    
+    .save-button {
+        right: 20px;
+        top: 20px;
+    }
+
+    .profile-section {
+        width: 180px;
+    }
+
+    .profile-image-container {
+        width: 180px;
+        height: 180px;
+    }
+
+    .profile-circle-bg {
+        width: 180px;
+        height: 180px;
+    }
+
+    .profile-image {
+        width: 160px;
+        height: 160px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .profile-name {
+        font-size: 36px;
+    }
+    
+    .contact-info {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .info-fields {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .bottom-sections-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio-edit-container {
+        padding: 70px 15px 30px 15px;
+    }
+    
+    .profile-section {
+        width: 150px;
     }
 
     .profile-image-container {
@@ -424,16 +409,24 @@
     .profile-image {
         width: 130px;
         height: 130px;
-        top: 10px;
-        left: 10px;
     }
 
     .profile-name {
-        font-size: 32px;
+        font-size: 28px;
     }
-
-    .info-fields {
-        grid-template-columns: 1fr;
+    
+    .where-input {
+        font-size: 16px;
+        padding: 8px 15px;
+    }
+    
+    .info-field {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+    
+    .section-title {
+        font-size: 14px;
     }
 }
 
