@@ -8,9 +8,19 @@ export const chatbotService = {
    */
   async createSession() {
     try {
+      console.log('chatbotService.createSession: Creating new session')
+      console.log('API endpoint:', API_ENDPOINTS.CHAT.CREATE_SESSION)
       const response = await apiClient.post(API_ENDPOINTS.CHAT.CREATE_SESSION)
+      console.log('chatbotService.createSession: Response status:', response.status)
+      console.log('chatbotService.createSession: Response data:', response.data)
       return response.data
     } catch (error) {
+      console.error('chatbotService.createSession: Error:', error)
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
       throw error
     }
   },
@@ -21,9 +31,28 @@ export const chatbotService = {
    */
   async getSessions() {
     try {
+      console.log('chatbotService.getSessions: Fetching sessions')
+      console.log('API endpoint:', API_ENDPOINTS.CHAT.GET_SESSIONS)
       const response = await apiClient.get(API_ENDPOINTS.CHAT.GET_SESSIONS)
-      return response.data
+      console.log('chatbotService.getSessions: Response status:', response.status)
+      console.log('chatbotService.getSessions: Response data:', response.data)
+      // Handle different response formats
+      const data = response.data
+      if (Array.isArray(data)) {
+        return data
+      } else if (data?.sessions) {
+        return data.sessions
+      } else if (data?.data) {
+        return Array.isArray(data.data) ? data.data : [data.data]
+      }
+      return data || []
     } catch (error) {
+      console.error('chatbotService.getSessions: Error:', error)
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
       throw error
     }
   },
@@ -63,9 +92,28 @@ export const chatbotService = {
    */
   async getMessages(sessionId) {
     try {
+      console.log('chatbotService.getMessages: Fetching messages for session:', sessionId)
+      console.log('API endpoint:', API_ENDPOINTS.CHAT.GET_MESSAGES(sessionId))
       const response = await apiClient.get(API_ENDPOINTS.CHAT.GET_MESSAGES(sessionId))
-      return response.data
+      console.log('chatbotService.getMessages: Response status:', response.status)
+      console.log('chatbotService.getMessages: Response data:', response.data)
+      // Handle different response formats
+      const data = response.data
+      if (Array.isArray(data)) {
+        return data
+      } else if (data?.messages) {
+        return data.messages
+      } else if (data?.data) {
+        return Array.isArray(data.data) ? data.data : [data.data]
+      }
+      return data || []
     } catch (error) {
+      console.error('chatbotService.getMessages: Error:', error)
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
       throw error
     }
   },
@@ -78,11 +126,32 @@ export const chatbotService = {
    */
   async sendMessage(sessionId, message) {
     try {
-      const response = await apiClient.post(API_ENDPOINTS.CHAT.SEND_MESSAGE(sessionId), {
-        message
-      })
+      console.log('chatbotService.sendMessage: Sending message to session:', sessionId)
+      console.log('API endpoint:', API_ENDPOINTS.CHAT.SEND_MESSAGE(sessionId))
+      console.log('Message content:', message)
+      
+      // Try different possible request body formats
+      // Common formats: { message }, { content }, { text }, { message: content }
+      const requestBody = { 
+        message: message,
+        content: message  // Also send as content in case backend expects it
+      }
+      console.log('Request body:', requestBody)
+      
+      const response = await apiClient.post(API_ENDPOINTS.CHAT.SEND_MESSAGE(sessionId), requestBody)
+      console.log('chatbotService.sendMessage: Response status:', response.status)
+      console.log('chatbotService.sendMessage: Response data:', response.data)
+      console.log('chatbotService.sendMessage: Full response:', JSON.stringify(response.data, null, 2))
       return response.data
     } catch (error) {
+      console.error('chatbotService.sendMessage: Error:', error)
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url,
+        requestData: error.config?.data
+      })
       throw error
     }
   },

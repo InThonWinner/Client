@@ -7,6 +7,8 @@ import CertificationPage from './components/CertificationPage'
 import LoginPage from './components/LoginPage'
 import ChatbotPage from './components/ChatbotPage'
 import FeedPage from './components/FeedPage'
+import FeedWritePage from './components/FeedWritePage'
+import FeedReadPage from './components/FeedReadPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -48,6 +50,22 @@ function App() {
           element={
             <ProtectedRoute>
               <FeedPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/feed/write" 
+          element={
+            <ProtectedRoute>
+              <FeedWritePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/feed/:id" 
+          element={
+            <ProtectedRoute>
+              <FeedReadPage />
             </ProtectedRoute>
           } 
         />

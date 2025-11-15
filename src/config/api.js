@@ -38,6 +38,7 @@ export const API_ENDPOINTS = {
   // Posts
   POSTS: {
     GET_ALL: '/posts',
+    GET_BY_ID: (id) => `/posts/${id}`,
     CREATE: '/posts',
     UPDATE: (id) => `/posts/${id}`,
     DELETE: (id) => `/posts/${id}`

@@ -9,9 +9,14 @@ export const feedService = {
    */
   async getFeed(params = {}) {
     try {
+      console.log('feedService.getFeed called with params:', params)
+      console.log('API endpoint:', API_ENDPOINTS.POSTS.GET_ALL)
       const response = await apiClient.get(API_ENDPOINTS.POSTS.GET_ALL, { params })
+      console.log('feedService response status:', response.status)
+      console.log('feedService response data:', response.data)
       return response.data
     } catch (error) {
+      console.error('feedService.getFeed error:', error)
       throw error
     }
   },
@@ -60,18 +65,26 @@ export const feedService = {
   },
 
   /**
-   * Get specific feed post by ID (alias for consistency)
-   * @param {string} id - Post ID
+   * Get specific feed post by ID
+   * @param {string|number} id - Post ID
    * @returns {Promise} Post data
    */
   async getFeedPost(id) {
     try {
-      // Since there's no GET /posts/{id} endpoint, we'll get all and filter
-      // Or you might want to use a different approach
-      const response = await apiClient.get(API_ENDPOINTS.POSTS.GET_ALL)
-      const posts = Array.isArray(response.data) ? response.data : response.data.posts || []
-      return posts.find(post => post.id === id || post._id === id)
+      console.log('feedService.getFeedPost called with id:', id)
+      console.log('API endpoint:', API_ENDPOINTS.POSTS.GET_BY_ID(id))
+      const response = await apiClient.get(API_ENDPOINTS.POSTS.GET_BY_ID(id))
+      console.log('feedService.getFeedPost response status:', response.status)
+      console.log('feedService.getFeedPost response data:', response.data)
+      return response.data
     } catch (error) {
+      console.error('feedService.getFeedPost error:', error)
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url
+      })
       throw error
     }
   }
