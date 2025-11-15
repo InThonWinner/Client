@@ -13,7 +13,8 @@
 
 .signup-form-container {
     width: 452px;
-    height: 662px;
+    height: auto;
+    min-height: 800px;
     background: rgba(217, 217, 217, 0);
     border: 2px solid #862633;
     border-radius: 10px;
@@ -66,7 +67,9 @@
     background: #F7E9EC;
     border: 1px solid #D9D9D9;
     border-radius: 8px;
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
 }
 
 .accordion-header {
@@ -77,6 +80,7 @@
     cursor: pointer;
     min-height: 54px;
     box-sizing: border-box;
+    user-select: none;
 }
 
 .accordion-title {
@@ -86,6 +90,7 @@
     line-height: 1.399999976158142em;
     color: #626262;
     flex: 1;
+    text-align: left;
 }
 
 .accordion-chevron {
@@ -93,6 +98,7 @@
     height: 20px;
     transition: transform 0.3s ease;
     flex-shrink: 0;
+    stroke: #626262;
 }
 
 .accordion-chevron.open {
@@ -102,7 +108,15 @@
 .accordion-content {
     border-top: 1px solid #D9D9D9;
     background: #FFFFFF;
-    animation: slideDown 0.3s ease-out;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+}
+
+.accordion-content.open {
+    max-height: 200px;
+    opacity: 1;
 }
 
 .accordion-option {
@@ -113,6 +127,7 @@
     color: #626262;
     cursor: pointer;
     transition: background 0.2s ease;
+    text-align: left;
 }
 
 .accordion-option:hover {
@@ -121,17 +136,6 @@
 
 .accordion-option:not(:last-child) {
     border-bottom: 1px solid #F7E9EC;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        max-height: 0;
-    }
-    to {
-        opacity: 1;
-        max-height: 200px;
-    }
 }
 
 /* Sign Up Button */
@@ -176,7 +180,7 @@
         width: 100%;
         max-width: 452px;
         height: auto;
-        min-height: 662px;
+        min-height: 800px;
     }
 }
 

@@ -4,57 +4,62 @@
     background: #862633;
     position: relative;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 0;
     box-sizing: border-box;
 }
 
-/* Edit Button */
-.edit-button {
+/* Top Right Buttons */
+.top-buttons {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 39px;
+    right: 46px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-family: 'Raleway', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 1.5em;
-    color: #FFFFFF;
-    opacity: 0.8;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px 12px;
-    transition: opacity 0.3s ease;
+    gap: 16px;
     z-index: 10;
 }
 
-.edit-button:hover {
-    opacity: 1;
-}
-
-.edit-icon {
+.close-button {
     width: 20px;
     height: 20px;
-    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+.close-button:hover {
+    opacity: 0.7;
+}
+
+.close-button:active {
+    transform: scale(0.95);
 }
 
 /* Main Layout */
 .portfolio-wrapper {
-    max-width: 1200px;
+    max-width: 1440px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 40px;
-    align-items: start;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    align-items: flex-start;
+    padding: 0;
+    position: relative;
+    min-height: 1024px;
 }
 
-/* Profile Section */
-.profile-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* Profile Image Section (Left) */
+.profile-image-section {
+    position: absolute;
+    left: 154px;
+    top: 154px;
+    width: 266px;
+    height: 235px;
 }
 
 .profile-image-container {
@@ -85,45 +90,104 @@
     z-index: 1;
 }
 
+/* Content Area (Right) */
+.content-area {
+    position: absolute;
+    left: 450px;
+    top: 140px;
+    width: 810px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Upper Section */
+.upper-section {
+    position: relative;
+    width: 810px;
+    height: 253px;
+}
+
+.upper-section-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(217, 217, 217, 0.3);
+    border-radius: 10px;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+/* Name Section */
+.name-section {
+    position: absolute;
+    left: 26px;
+    top: 33px;
+    z-index: 1;
+}
+
 .profile-name {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
-    font-size: 45px;
-    line-height: 1.210227288140191em;
+    font-size: 50px;
+    line-height: 1.210227279663086em;
     color: #FFFFFF;
     margin: 0;
-    text-align: center;
+    text-align: left;
 }
 
-.contact-info {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin: 20px 0;
+.profile-name-input {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 50px;
+    line-height: 1.210227279663086em;
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: left;
+    width: auto;
+    min-width: 200px;
+    box-sizing: border-box;
+    outline: none;
 }
 
-.contact-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.profile-name-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
 }
 
-.contact-icon {
-    fill: #FFFFFF;
+/* Affiliation Section */
+.affiliation-section {
+    position: absolute;
+    left: 185px;
+    top: 12px;
+    width: 598px;
+    height: 72px;
+    z-index: 1;
 }
 
-/* Where Input */
-.where-input {
-    width: 100%;
+.affiliation-header {
+    position: absolute;
+    right: 16px;
+    top: 4px;
+    z-index: 2;
+}
+
+.affiliation-input {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    width: 598px;
     height: 44px;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 10px;
     padding: 10px 22px;
-    margin-bottom: 15px;
     box-sizing: border-box;
 }
 
-.where-text {
+.affiliation-text {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     font-size: 20px;
@@ -133,22 +197,54 @@
     border: none;
     outline: none;
     width: 100%;
+    text-align: left;
 }
 
-.where-text::placeholder {
+.affiliation-text::placeholder {
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* Info Fields */
+/* Contact Section */
+.contact-section {
+    position: absolute;
+    left: 74px;
+    top: 132px;
+    width: 710px;
+    height: 103px;
+    z-index: 1;
+}
+
+.contact-label-text {
+    position: absolute;
+    left: -41px;
+    top: 1px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 35px;
+    line-height: 1.2102272033691406em;
+    color: #FFFFFF;
+    z-index: 2;
+}
+
+.contact-header {
+    position: absolute;
+    right: 16px;
+    top: -24px;
+    z-index: 2;
+}
+
 .info-fields {
+    position: absolute;
+    left: 109px;
+    top: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    width: 100%;
+    grid-template-columns: 241px 241px;
+    gap: 19px 119px;
+    width: 601px;
 }
 
 .info-field {
-    width: 100%;
+    width: 241px;
     height: 44px;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 10px;
@@ -166,20 +262,46 @@
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* Content Sections */
-.content-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
+/* Down Section */
+.down-section {
+    position: absolute;
+    left: 188px;
+    top: 411px;
+    width: 1072px;
+    height: 530px;
 }
 
-.section-card {
+.down-section-bg {
+    position: absolute;
     width: 100%;
-    background: transparent;
+    height: 100%;
+    background: rgba(217, 217, 217, 0.3);
     border-radius: 10px;
-    padding: 0;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.down-content {
     position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Section Cards */
+.section-card {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.section-card.full-width {
+    width: 1032px;
 }
 
 .section-header {
@@ -187,7 +309,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 5px;
-    height: 32px;
+    height: 24px;
     margin-bottom: 8px;
 }
 
@@ -201,36 +323,157 @@
     margin: 0;
 }
 
+.section-edit-btn,
+.section-save-btn {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #FFFFFF;
+    opacity: 0.8;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.3s ease;
+}
+
+.section-edit-btn:hover,
+.section-save-btn:hover {
+    opacity: 1;
+}
+
 .section-content {
     width: 100%;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 10px;
-    min-height: 100px;
+    min-height: 83px;
     padding: 20px;
     box-sizing: border-box;
 }
 
-/* Bottom row - 프로젝트 and 활동 및 수상 경력 side by side on larger screens */
+.section-card.full-width .section-content {
+    width: 1032px;
+    min-height: 83px;
+}
+
+.section-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6em;
+    color: #333333;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.section-textarea {
+    width: 100%;
+    min-height: 83px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6em;
+    color: #333333;
+    resize: vertical;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.section-textarea::placeholder {
+    color: rgba(51, 51, 51, 0.5);
+}
+
+/* Bottom Sections (Projects and Activities) */
 .bottom-sections {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: 480px 480px;
+    gap: 74px;
+    margin-top: 0;
+}
+
+.bottom-sections .section-card {
+    width: 480px;
+}
+
+.bottom-sections .section-content {
+    width: 480px;
+    min-height: 200px;
 }
 
 /* Responsive Design */
+@media (max-width: 1440px) {
+    .portfolio-wrapper {
+        transform: scale(0.9);
+        transform-origin: top left;
+    }
+}
+
 @media (max-width: 1024px) {
     .portfolio-wrapper {
-        grid-template-columns: 1fr;
-        gap: 30px;
+        flex-direction: column;
+        padding: 20px;
     }
 
-    .profile-section {
-        max-width: 400px;
+    .profile-image-section {
+        position: relative;
+        left: auto;
+        top: auto;
+        margin: 0 auto 30px;
+    }
+
+    .content-area {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: 100%;
+    }
+
+    .down-section {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: 100%;
+        max-width: 1072px;
+        margin: 20px auto 0;
+    }
+
+    .upper-section,
+    .down-section {
+        width: 100%;
+        max-width: 810px;
         margin: 0 auto;
+    }
+
+    .down-section {
+        height: auto;
+        min-height: 530px;
+    }
+
+    .section-card.full-width {
+        width: 100%;
+    }
+
+    .section-card.full-width .section-content {
+        width: 100%;
     }
 
     .bottom-sections {
         grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .bottom-sections .section-card {
+        width: 100%;
+    }
+
+    .bottom-sections .section-content {
+        width: 100%;
     }
 }
 
@@ -239,57 +482,20 @@
         padding: 60px 15px 40px 15px;
     }
 
-    .edit-button {
+    .top-buttons {
         top: 15px;
         right: 15px;
-        font-size: 14px;
-        padding: 6px 10px;
-    }
-
-    .edit-icon {
-        width: 18px;
-        height: 18px;
-    }
-
-    .portfolio-wrapper {
-        gap: 25px;
-    }
-
-    .profile-image-container {
-        width: 180px;
-        height: 180px;
-    }
-
-    .profile-circle-bg {
-        width: 180px;
-        height: 180px;
-    }
-
-    .profile-image {
-        width: 160px;
-        height: 160px;
-        top: 10px;
-        left: 10px;
     }
 
     .profile-name {
         font-size: 32px;
     }
 
-    .where-input {
-        height: 40px;
-        padding: 8px 18px;
+    .profile-name-input {
+        font-size: 32px;
     }
 
-    .where-text {
-        font-size: 18px;
-    }
-
-    .info-fields {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-
+    .affiliation-input,
     .info-field {
         height: 40px;
         padding: 8px 18px;
@@ -303,44 +509,5 @@
     .section-content {
         padding: 15px;
         min-height: 80px;
-    }
-
-    .content-sections {
-        gap: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .portfolio-container {
-        padding: 50px 10px 30px 10px;
-    }
-
-    .profile-image-container {
-        width: 150px;
-        height: 150px;
-    }
-
-    .profile-circle-bg {
-        width: 150px;
-        height: 150px;
-    }
-
-    .profile-image {
-        width: 130px;
-        height: 130px;
-        top: 10px;
-        left: 10px;
-    }
-
-    .profile-name {
-        font-size: 28px;
-    }
-
-    .where-text {
-        font-size: 16px;
-    }
-
-    .section-content {
-        padding: 12px;
     }
 }

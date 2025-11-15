@@ -93,6 +93,36 @@
     transform: translateY(0);
 }
 
+/* Signup Link */
+.signup-link-container {
+    text-align: center;
+    margin-top: 20px;
+    padding: 0 47px 20px;
+}
+
+.signup-link-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #000000;
+}
+
+.signup-link {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #000000;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.signup-link:hover {
+    color: #862633;
+}
+
 /* Responsive Design */
 @media (max-width: 1440px) {
     .login-container {

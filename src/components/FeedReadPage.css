@@ -1,0 +1,225 @@
+.feed-read-container {
+    width: 100%;
+    min-height: 100vh;
+    background: #FFFFFF;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.feed-read-bg {
+    position: relative;
+    width: 100%;
+    max-width: 898px;
+    min-height: 587px;
+    background: rgba(134, 38, 51, 0.1);
+    border: 2px solid #862633;
+    border-radius: 15px;
+    padding: 34px;
+    box-sizing: border-box;
+    margin-top: 20px;
+}
+
+.close-button {
+    position: absolute;
+    right: 34px;
+    top: 17px;
+    width: 20px;
+    height: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+.close-button:hover {
+    opacity: 0.7;
+}
+
+.anonymous-label {
+    position: absolute;
+    right: 110px;
+    top: 153px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #862633;
+}
+
+.title-display {
+    position: absolute;
+    left: 34px;
+    top: 54px;
+    width: 830px;
+    min-height: 78px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    padding: 27px 21px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #000000;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+.content-display {
+    position: absolute;
+    left: 34px;
+    top: 198px;
+    width: 830px;
+    min-height: 351px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    padding: 21px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #000000;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.loading-state,
+.error-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    color: #333333;
+}
+
+.error-state {
+    color: #ff4444;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.retry-button {
+    padding: 8px 16px;
+    background: #862633;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    transition: opacity 0.3s ease, background 0.2s ease;
+}
+
+.retry-button:hover {
+    opacity: 0.9;
+    background: rgba(134, 38, 51, 0.9);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .feed-read-bg {
+        padding: 20px;
+    }
+
+    .close-button {
+        right: 20px;
+        top: 10px;
+    }
+
+    .anonymous-label {
+        right: 20px;
+        top: 50px;
+    }
+
+    .title-display {
+        left: 20px;
+        top: 80px;
+        width: calc(100% - 40px);
+    }
+
+    .content-display {
+        left: 20px;
+        top: 180px;
+        width: calc(100% - 40px);
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .feed-read-container {
+        padding: 10px;
+    }
+
+    .feed-read-bg {
+        padding: 15px;
+        min-height: auto;
+    }
+
+    .close-button {
+        right: 15px;
+        top: 10px;
+    }
+
+    .anonymous-label {
+        position: relative;
+        left: auto;
+        right: 0;
+        top: 0;
+        margin-bottom: 15px;
+        text-align: right;
+    }
+
+    .title-display {
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 15px;
+    }
+
+    .content-display {
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 100%;
+        min-height: 250px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feed-read-bg {
+        padding: 10px;
+    }
+
+    .anonymous-label {
+        font-size: 14px;
+    }
+
+    .title-display {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .content-display {
+        padding: 12px;
+        font-size: 14px;
+        min-height: 200px;
+    }
+}
+

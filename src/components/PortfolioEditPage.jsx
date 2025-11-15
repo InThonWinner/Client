@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { portfolioService } from '../services'
 import './PortfolioEditPage.css'
 
 function PortfolioEditPage() {
@@ -11,10 +12,43 @@ function PortfolioEditPage() {
     projects: true,
     activities: true
   })
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [userName, setUserName] = useState('김호이')
 
   useEffect(() => {
     setOpacity(1)
+    loadPortfolio()
   }, [])
+
+  const loadPortfolio = async () => {
+    setIsLoading(true)
+    try {
+      const portfolio = await portfolioService.getPortfolio()
+      // Update state with loaded portfolio data
+      if (portfolio) {
+        setWhere(portfolio.where || 'SK telecom')
+        setInfoFields(portfolio.infoFields || ['', '', '', ''])
+        setToggles(portfolio.sections || {
+          techStack: true,
+          career: true,
+          projects: true,
+          activities: true
+        })
+        if (portfolio.name) setUserName(portfolio.name)
+      }
+    } catch (err) {
+      console.error('Error loading portfolio:', err)
+      // Don't show error if portfolio doesn't exist yet
+      if (err.message && !err.message.includes('404')) {
+        setError('포트폴리오를 불러오는데 실패했습니다.')
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleInfoFieldChange = (index, value) => {
     const newFields = [...infoFields]
@@ -29,9 +63,13 @@ function PortfolioEditPage() {
     }))
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    setError('')
+    setSuccess('')
+    setIsSaving(true)
+
     const formData = {
-      name: '김호이',
+      name: userName,
       where: where,
       infoFields: infoFields,
       sections: {
@@ -54,14 +92,62 @@ function PortfolioEditPage() {
       }
     }
     
-    console.log('Form data:', formData)
-    alert('포트폴리오가 저장되었습니다! (콘솔에서 데이터 확인 가능)')
+    try {
+      await portfolioService.savePortfolio(formData)
+      setSuccess('포트폴리오가 저장되었습니다!')
+      setTimeout(() => setSuccess(''), 3000)
+    } catch (err) {
+      setError(err.message || '포트폴리오 저장에 실패했습니다.')
+      console.error('Save portfolio error:', err)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="portfolio-edit-container" style={{ opacity, transition: 'opacity 0.5s ease-in' }}>
+        <div style={{ textAlign: 'center', padding: '50px' }}>로딩 중...</div>
+      </div>
+    )
   }
 
   return (
     <div className="portfolio-edit-container" style={{ opacity, transition: 'opacity 0.5s ease-in' }}>
       {/* Save Button */}
-      <button className="save-button" onClick={handleSave}>Save</button>
+      <button className="save-button" onClick={handleSave} disabled={isSaving}>
+        {isSaving ? '저장 중...' : 'Save'}
+      </button>
+
+      {/* Success/Error Messages */}
+      {success && (
+        <div style={{ 
+          position: 'fixed', 
+          top: '20px', 
+          right: '20px', 
+          background: '#4CAF50', 
+          color: 'white', 
+          padding: '10px 20px', 
+          borderRadius: '5px',
+          zIndex: 1000
+        }}>
+          {success}
+        </div>
+      )}
+      {error && (
+        <div style={{ 
+          position: 'fixed', 
+          top: '20px', 
+          right: '20px', 
+          background: '#ff4444', 
+          color: 'white', 
+          padding: '10px 20px', 
+          borderRadius: '5px',
+          zIndex: 1000
+        }}>
+          {error}
+        </div>
+      )}
 
       {/* Left Profile Section */}
       <div className="profile-section">
@@ -73,7 +159,7 @@ function PortfolioEditPage() {
       </div>
 
       {/* Name - positioned separately */}
-      <h1 className="profile-name">김호이</h1>
+      <h1 className="profile-name">{userName}</h1>
 
       {/* Contact Info */}
       <div className="contact-info">

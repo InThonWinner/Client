@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { authService } from '../services'
 import './LandingPage.css'
 
 function LandingPage() {
@@ -21,7 +22,14 @@ function LandingPage() {
   }
 
   const handleStart = () => {
-    console.log('시작하기 button clicked')
+    // 로그인 상태 확인
+    if (!authService.isAuthenticated()) {
+      // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+      alert('로그인이 필요합니다.')
+      navigate('/login')
+      return
+    }
+    // 로그인된 경우 챗봇 페이지로 이동
     navigate('/chatbot')
   }
 
