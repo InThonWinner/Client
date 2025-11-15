@@ -1,0 +1,346 @@
+.portfolio-container {
+    width: 100%;
+    min-height: 100vh;
+    background: #862633;
+    position: relative;
+    margin: 0 auto;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+/* Edit Button */
+.edit-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #FFFFFF;
+    opacity: 0.8;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.edit-button:hover {
+    opacity: 1;
+}
+
+.edit-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Main Layout */
+.portfolio-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* Profile Section */
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-image-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+}
+
+.profile-circle-bg {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    top: 0;
+    left: 0;
+}
+
+.profile-image {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
+.profile-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 45px;
+    line-height: 1.210227288140191em;
+    color: #FFFFFF;
+    margin: 0;
+    text-align: center;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-icon {
+    fill: #FFFFFF;
+}
+
+/* Where Input */
+.where-input {
+    width: 100%;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 10px 22px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.where-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.2102272033691406em;
+    color: #FFFFFF;
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.where-text::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Info Fields */
+.info-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+}
+
+.info-field {
+    width: 100%;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    border: none;
+    padding: 10px 22px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #FFFFFF;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.info-field::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Content Sections */
+.content-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.section-card {
+    width: 100%;
+    background: transparent;
+    border-radius: 10px;
+    padding: 0;
+    position: relative;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px;
+    height: 32px;
+    margin-bottom: 8px;
+}
+
+.section-title {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #FFFFFF;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.section-content {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    min-height: 100px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Bottom row - 프로젝트 and 활동 및 수상 경력 side by side on larger screens */
+.bottom-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .portfolio-wrapper {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .profile-section {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .bottom-sections {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .portfolio-container {
+        padding: 60px 15px 40px 15px;
+    }
+
+    .edit-button {
+        top: 15px;
+        right: 15px;
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+
+    .edit-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .portfolio-wrapper {
+        gap: 25px;
+    }
+
+    .profile-image-container {
+        width: 180px;
+        height: 180px;
+    }
+
+    .profile-circle-bg {
+        width: 180px;
+        height: 180px;
+    }
+
+    .profile-image {
+        width: 160px;
+        height: 160px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .profile-name {
+        font-size: 32px;
+    }
+
+    .where-input {
+        height: 40px;
+        padding: 8px 18px;
+    }
+
+    .where-text {
+        font-size: 18px;
+    }
+
+    .info-fields {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .info-field {
+        height: 40px;
+        padding: 8px 18px;
+        font-size: 14px;
+    }
+
+    .section-title {
+        font-size: 14px;
+    }
+
+    .section-content {
+        padding: 15px;
+        min-height: 80px;
+    }
+
+    .content-sections {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio-container {
+        padding: 50px 10px 30px 10px;
+    }
+
+    .profile-image-container {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-circle-bg {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-image {
+        width: 130px;
+        height: 130px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .profile-name {
+        font-size: 28px;
+    }
+
+    .where-text {
+        font-size: 16px;
+    }
+
+    .section-content {
+        padding: 12px;
+    }
+}

@@ -1,0 +1,224 @@
+.landing-container {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(270deg, rgba(134, 38, 51, 1) 0%, rgba(255, 173, 185, 0.7) 100%);
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 34px 5% 0 5%;
+    position: relative;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    width: 174px;
+    height: 61px;
+    position: relative;
+}
+
+.logo-img {
+    width: 61px;
+    height: 61px;
+    object-fit: cover;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.logo-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.2102272510528564em;
+    color: #862633;
+    position: absolute;
+    left: 73px;
+    top: 16px;
+    width: 101px;
+    height: 29px;
+}
+
+.nav {
+    display: flex;
+    gap: 20px;
+    position: static;
+}
+
+.nav-link {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #FFFFFF;
+    opacity: 0.8;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.nav-link:hover {
+    opacity: 1;
+}
+
+.nav-link:first-child {
+    width: 42px;
+    height: 24px;
+}
+
+.nav-link:last-child {
+    width: 52px;
+    height: 24px;
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 40px 5%;
+    margin-top: 40px;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.content-left {
+    flex: 1;
+    min-width: 300px;
+    max-width: 698px;
+}
+
+.main-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.2102272033691406em;
+    color: #862633;
+    margin-bottom: 48px;
+    width: 482px;
+    height: 96px;
+}
+
+.subtitle {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.2102272510528564em;
+    color: #FFFFFF;
+    margin-bottom: 187px;
+    width: 698px;
+    height: 78px;
+}
+
+.primary-button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.2102272510528564em;
+    color: #FFFFFF;
+    background: rgba(134, 38, 51, 0.9);
+    border: none;
+    border-radius: 8px;
+    padding: 20px 16px;
+    width: 180px;
+    height: 79px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.primary-button:hover {
+    background: rgba(134, 38, 51, 1);
+    transform: translateY(-2px);
+}
+
+.primary-button:active {
+    transform: translateY(0);
+}
+
+.content-right {
+    flex: 0 0 auto;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emblem-img {
+    width: 340px;
+    height: 481px;
+    object-fit: cover;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .content-left {
+        width: 100%;
+        max-width: 698px;
+    }
+    
+    .main-title {
+        width: 100%;
+        height: auto;
+        margin-bottom: 30px;
+    }
+    
+    .subtitle {
+        width: 100%;
+        height: auto;
+        margin-bottom: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .landing-container {
+        min-height: 100vh;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .nav {
+        position: static;
+        justify-content: center;
+    }
+    
+    .main-content {
+        margin-top: 40px;
+    }
+    
+    .main-title {
+        font-size: 28px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+    }
+    
+    .emblem-img {
+        width: 250px;
+        height: auto;
+    }
+}
+

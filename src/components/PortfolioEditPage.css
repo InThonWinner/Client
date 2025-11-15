@@ -1,0 +1,439 @@
+.portfolio-edit-container {
+    width: 1440px;
+    max-width: 100%;
+    min-height: 1024px;
+    background: #862633;
+    position: relative;
+    margin: 0 auto;
+    padding: 146px 204px 0 166px;
+    box-sizing: border-box;
+}
+
+/* Save Button */
+.save-button {
+    position: absolute;
+    top: 146px;
+    right: 204px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #FFFFFF;
+    opacity: 0.8;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 36px;
+    height: 24px;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.save-button:hover {
+    opacity: 1;
+}
+
+/* Profile Section */
+.profile-section {
+    position: absolute;
+    left: 166px;
+    top: 173px;
+    width: 220px;
+}
+
+
+.profile-image-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin-bottom: 20px;
+}
+
+.profile-circle-bg {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    top: 0;
+    left: 0;
+}
+
+.profile-image {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
+.profile-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 45px;
+    line-height: 1.210227288140191em;
+    color: #FFFFFF;
+    margin: 0;
+    width: 125px;
+    height: 54px;
+    position: absolute;
+    left: 486px; /* Absolute position from container */
+    top: 176px; /* Absolute position from container */
+}
+
+.contact-info {
+    position: relative;
+    width: 100%;
+    height: 200px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    position: absolute;
+}
+
+/* Contact icons positioned absolutely relative to container */
+.contact-item.email {
+    left: 579px; /* Absolute position from container */
+    top: 251px; /* Absolute position from container */
+}
+
+.contact-item.phone {
+    left: 958px; /* Absolute position from container */
+    top: 300px; /* Absolute position from container */
+}
+
+.contact-item.github {
+    left: 494px; /* Absolute position from container */
+    top: 324px; /* Absolute position from container */
+}
+
+.contact-item.linkedin {
+    left: 526px; /* Absolute position from container */
+    top: 306px; /* Absolute position from container */
+}
+
+.contact-icon {
+    fill: #FFFFFF;
+}
+
+/* Where Input */
+.where-input {
+    width: 601px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 10px 22px;
+    margin-bottom: 15px;
+    position: absolute;
+    left: 635px; /* Absolute position from container */
+    top: 180px; /* Absolute position from container */
+    box-sizing: border-box;
+}
+
+.where-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.2102272033691406em;
+    color: #FFFFFF;
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.where-text::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Info Fields */
+.info-fields {
+    position: absolute;
+    left: 635px; /* Absolute position from container */
+    top: 239px; /* Absolute position from container */
+    display: grid;
+    grid-template-columns: 241px 241px;
+    grid-template-rows: 44px 44px;
+    gap: 19px;
+    width: 601px;
+}
+
+.info-field {
+    width: 241px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    border: none;
+    padding: 10px 22px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #FFFFFF;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.info-field::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Content Sections */
+.content-sections {
+    position: absolute;
+    left: 204px; /* Absolute position from container */
+    top: 423px; /* Absolute position from container */
+    width: 1032px;
+}
+
+.section-card {
+    width: 480px;
+    background: transparent;
+    border-radius: 10px;
+    padding: 0;
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.section-card.full-width {
+    width: 1032px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px;
+    height: 32px;
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #FFFFFF;
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: 0.3s;
+    border-radius: 20px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #FFFFFF;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #FEDA09;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(16px);
+}
+
+.section-content {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    min-height: 83px;
+    padding: 20px;
+    margin-top: 0;
+    box-sizing: border-box;
+}
+
+.section-card.full-width .section-content {
+    min-height: 83px;
+}
+
+.section-card:not(.full-width) .section-content {
+    min-height: 200px;
+}
+
+/* Bottom sections row */
+.bottom-sections-row {
+    display: flex;
+    gap: 74px; /* 758 - 204 - 480 = 74 */
+    width: 100%;
+    position: relative;
+}
+
+.bottom-sections-row .section-card {
+    flex: 0 0 480px;
+}
+
+/* 프로젝트 section at x: 204 */
+.bottom-sections-row .section-card:first-child {
+    position: absolute;
+    left: 0;
+}
+
+/* 활동 및 수상 경력 section at x: 758 */
+.bottom-sections-row .section-card:last-child {
+    position: absolute;
+    left: 554px; /* 758 - 204 */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1440px) {
+    .portfolio-edit-container {
+        width: 100%;
+        padding: 100px 5% 0 5%;
+    }
+
+    .save-button {
+        right: 5%;
+        top: 100px;
+    }
+
+    .profile-section {
+        position: static;
+        margin: 0 auto 40px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .profile-name {
+        position: static;
+        margin: 20px auto;
+        text-align: center;
+    }
+
+    .contact-info {
+        position: static;
+        height: auto;
+        margin: 20px auto;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .contact-item {
+        position: static;
+        margin: 10px;
+    }
+
+    .where-input {
+        position: static;
+        width: 100%;
+        max-width: 601px;
+        margin: 20px auto 15px;
+    }
+
+    .info-fields {
+        position: static;
+        width: 100%;
+        max-width: 601px;
+        margin: 0 auto;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .info-field {
+        width: 100%;
+    }
+
+    .content-sections {
+        position: static;
+        width: 100%;
+        margin-top: 40px;
+    }
+
+    .section-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .section-card.full-width {
+        width: 100%;
+    }
+
+    .bottom-sections-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .bottom-sections-row .section-card {
+        position: static;
+        flex: 1;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .portfolio-edit-container {
+        padding: 80px 20px 40px 20px;
+    }
+
+    .profile-image-container {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-circle-bg {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-image {
+        width: 130px;
+        height: 130px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .profile-name {
+        font-size: 32px;
+    }
+
+    .info-fields {
+        grid-template-columns: 1fr;
+    }
+}
+

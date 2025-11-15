@@ -1,0 +1,106 @@
+.feed-container {
+    width: 100%;
+    min-height: 100vh;
+    background: #FFFFFF;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.feed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px 96px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.feed-logo {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+}
+
+.header-nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-link-btn {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #333333;
+    opacity: 0.8;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-link-btn:hover {
+    opacity: 1;
+}
+
+.nav-link-btn.active {
+    opacity: 1;
+    font-weight: 600;
+}
+
+.feed-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.feed-content h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 32px;
+    color: #862633;
+    margin-bottom: 16px;
+}
+
+.feed-content p {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    color: #626262;
+}
+
+/* Responsive Design */
+@media (max-width: 1440px) {
+    .feed-container {
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    .feed-header {
+        padding: 24px 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .feed-header {
+        padding: 16px 20px;
+    }
+
+    .header-nav {
+        gap: 12px;
+    }
+
+    .nav-link-btn {
+        font-size: 14px;
+    }
+}
+
