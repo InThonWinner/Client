@@ -1,79 +1,134 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { chatbotService } from '../services'
 import './ChatbotPage.css'
 
 function ChatbotPage() {
   const navigate = useNavigate()
   const [opacity, setOpacity] = useState(0)
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: 'User',
-      text: '졸업하고 프론트 엔지니어로 일하고 싶어. 어떻게 공부하면 좋을까?',
-      avatar: '/images/profile.png'
-    },
-    {
-      id: 2,
-      sender: 'KUnnect',
-      text: `🧑‍💻 1. 선배들의 실제 경험을 기반으로 정리해드릴게요
-고려대 정보대 졸업생 중 프론트엔지니어로 간 선배들은 이렇게 준비했어요:
-React·TypeScript 기반의 개인 프로젝트 2~3개를 완성하며 실전 감각을 쌓았어요.
-일부 선배들은 Next.js로 SSR 경험을 쌓아 면접에서 강점을 보여줬어요.
-스터디, 동아리 활동을 통해 코드 리뷰 경험을 꾸준히 쌓은 것도 큰 도움이 됐다고 했어요.
-
-💡 2. 알아두면 좋은 실전 팁도 있어요
-선배들이 공통으로 추천한 학습 순서는 다음과 같아요.
-• HTML/CSS/JavaScript 기초 다지기
-• React + TypeScript 실전 프로젝트
-• 컴포넌트 구조 설계 / 상태관리 경험 (Zustand, Recoil 등)
-• Next.js 기반 프로젝트 1개 이상 만들기
-• CI/CD로 배포 경험 쌓기 (Vercel, Netlify)
-
-선배들의 자세한 경험을 보고 싶다면 여기 글을 참고해보세요.
-👉 프론트엔드 취업 준비 실전 팁 모음 (글 원문 링크)
-
-🤝 3. 더 궁금한 점이 있다면 이 선배들에게 직접 물어볼 수 있어요
-아래는 해당 분야로 진출한 선배들이에요:
-• 김OO (프론트엔드 엔지니어 @스타트업) → 프로필 보기 / 연결하기
-• 박OO (FE 인턴 → 정규직 전환) → 프로필 보기 / 연결하기
-
-필요하다면 비슷한 포트폴리오도 추천해드릴게요!`
-    }
-  ])
+  const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [sessionId, setSessionId] = useState(null)
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
     setOpacity(1)
+    initializeChat()
   }, [])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const handleSendMessage = (e) => {
-    e.preventDefault()
-    if (!inputMessage.trim()) return
+  const initializeChat = async () => {
+    try {
+      // Try to get existing sessions first
+      const sessions = await chatbotService.getSessions()
+      if (sessions && sessions.length > 0) {
+        // Use the most recent session
+        const latestSession = Array.isArray(sessions) ? sessions[0] : sessions
+        const id = latestSession.id || latestSession._id || latestSession.sessionId
+        if (id) {
+          setSessionId(id)
+          await loadMessages(id)
+          return
+        }
+      }
+      // If no sessions exist, create a new one
+      const newSession = await chatbotService.createSession()
+      const id = newSession.id || newSession._id || newSession.sessionId
+      if (id) {
+        setSessionId(id)
+      }
+    } catch (err) {
+      console.error('Error initializing chat:', err)
+      // Fallback: use direct AI chat if session-based fails
+    }
+  }
 
-    const newMessage = {
-      id: messages.length + 1,
+  const loadMessages = async (sessionId) => {
+    try {
+      const sessionMessages = await chatbotService.getMessages(sessionId)
+      if (sessionMessages && sessionMessages.length > 0) {
+        // Transform API messages to component format
+        const formattedMessages = sessionMessages.map((msg, index) => ({
+          id: msg.id || msg._id || index,
+          sender: msg.role === 'user' || msg.sender === 'user' ? 'User' : 'KUnnect',
+          text: msg.content || msg.message || msg.text || '',
+          avatar: msg.role === 'user' ? '/images/profile.png' : undefined
+        }))
+        setMessages(formattedMessages)
+      }
+    } catch (err) {
+      console.error('Error loading messages:', err)
+    }
+  }
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault()
+    if (!inputMessage?.trim() || isLoading) return
+
+    const userMessage = {
+      id: Date.now(),
       sender: 'User',
       text: inputMessage,
       avatar: '/images/profile.png'
     }
 
-    setMessages([...messages, newMessage])
+    setMessages(prev => [...prev, userMessage])
+    const currentInput = inputMessage
     setInputMessage('')
+    setIsLoading(true)
 
-    // Simulate bot response (you can replace this with actual API call)
-    setTimeout(() => {
-      const botResponse = {
-        id: messages.length + 2,
-        sender: 'KUnnect',
-        text: '답변을 준비 중입니다...'
+    // Add loading message
+    const loadingMessage = {
+      id: Date.now() + 1,
+      sender: 'KUnnect',
+      text: '답변을 준비 중입니다...'
+    }
+    setMessages(prev => [...prev, loadingMessage])
+
+    try {
+      let response
+
+      if (sessionId) {
+        // Use session-based chat
+        response = await chatbotService.sendMessage(sessionId, currentInput)
+      } else {
+        // Fallback to direct AI chat
+        const conversationHistory = messages
+          .filter(msg => msg.text) // Filter out messages without text
+          .map(msg => ({
+            role: msg.sender === 'User' ? 'user' : 'assistant',
+            content: msg.text || ''
+          }))
+        response = await chatbotService.chatWithAI(currentInput, conversationHistory)
       }
-      setMessages(prev => [...prev, botResponse])
-    }, 1000)
+      
+      // Remove loading message and add actual response
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => msg.id !== loadingMessage.id)
+        return [...withoutLoading, {
+          id: Date.now() + 2,
+          sender: 'KUnnect',
+          text: response.message || response.text || response.content || response.response || '답변을 받지 못했습니다.'
+        }]
+      })
+    } catch (err) {
+      // Remove loading message and add error message
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => msg.id !== loadingMessage.id)
+        return [...withoutLoading, {
+          id: Date.now() + 2,
+          sender: 'KUnnect',
+          text: '죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.'
+        }]
+      })
+      console.error('Chatbot error:', err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -137,9 +192,10 @@ React·TypeScript 기반의 개인 프로젝트 2~3개를 완성하며 실전 �
               placeholder="졸업하고 프론트 엔지니어로 일하고 싶어. 어떻게 공부하면 좋을까?"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
+              disabled={isLoading}
             />
           </div>
-          <button type="submit" className="send-button">
+          <button type="submit" className="send-button" disabled={isLoading || !inputMessage?.trim()}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
             </svg>
