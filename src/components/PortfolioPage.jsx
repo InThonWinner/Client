@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { portfolioService } from '../services'
+import { portfolioService, authService } from '../services'
 import './PortfolioPage.css'
 
 function PortfolioPage() {
@@ -40,10 +40,46 @@ function PortfolioPage() {
   const loadPortfolio = async () => {
     try {
       console.log('[PortfolioPage] Loading portfolio...')
+      
+      // Load user info to get realName
+      let userRealName = null
+      try {
+        const userProfile = await authService.getProfile()
+        console.log('[PortfolioPage] User profile:', userProfile)
+        console.log('[PortfolioPage] User profile keys:', Object.keys(userProfile || {}))
+        // Try different possible field names
+        userRealName = userProfile?.realName || 
+                      userProfile?.name || 
+                      userProfile?.userName || 
+                      userProfile?.user?.realName ||
+                      userProfile?.user?.name ||
+                      userProfile?.data?.realName ||
+                      userProfile?.data?.name ||
+                      null
+        console.log('[PortfolioPage] Extracted realName:', userRealName)
+      } catch (err) {
+        console.warn('[PortfolioPage] Failed to load user profile:', err)
+      }
+      
       const portfolio = await portfolioService.getMyPortfolio()
       console.log('[PortfolioPage] Received portfolio:', portfolio)
+      console.log('[PortfolioPage] Portfolio keys:', Object.keys(portfolio || {}))
+      
+      // Check if portfolio has user info embedded
+      if (portfolio?.user) {
+        console.log('[PortfolioPage] Portfolio has user info:', portfolio.user)
+        userRealName = portfolio.user.realName || portfolio.user.name || userRealName
+      }
+      
       if (portfolio) {
-        setDisplayName(portfolio.displayName || portfolio.name || '김호이')
+        // Priority: userRealName -> portfolio.displayName -> portfolio.name -> default
+        // Always prefer realName from user profile if available
+        const finalName = userRealName || portfolio.displayName || portfolio.name || '김호이'
+        console.log('[PortfolioPage] Setting displayName to:', finalName)
+        console.log('[PortfolioPage] userRealName:', userRealName)
+        console.log('[PortfolioPage] portfolio.displayName:', portfolio.displayName)
+        console.log('[PortfolioPage] portfolio.name:', portfolio.name)
+        setDisplayName(finalName)
         setAffiliation(portfolio.affiliation || 'SK telecom')
         
         // Parse contact - Backend returns contact as array of { type: string, value: string } objects
