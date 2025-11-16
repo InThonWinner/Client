@@ -45,7 +45,7 @@ export const portfolioService = {
 
   /**
    * Update tech stack
-   * @param {Object} techStackData - Tech stack data
+   * @param {Object} techStackData - Tech stack data (can include showTechStack)
    * @returns {Promise} Updated portfolio data
    */
   async updateTechStack(techStackData) {
@@ -59,7 +59,7 @@ export const portfolioService = {
 
   /**
    * Update career
-   * @param {Object} careerData - Career data
+   * @param {Object} careerData - Career data (can include showCareer)
    * @returns {Promise} Updated portfolio data
    */
   async updateCareer(careerData) {
@@ -73,7 +73,7 @@ export const portfolioService = {
 
   /**
    * Update projects
-   * @param {Object} projectsData - Projects data
+   * @param {Object} projectsData - Projects data (can include showProjects)
    * @returns {Promise} Updated portfolio data
    */
   async updateProjects(projectsData) {
@@ -98,7 +98,7 @@ export const portfolioService = {
 
   /**
    * Update activities and awards
-   * @param {Object} activitiesData - Activities and awards data
+   * @param {Object} activitiesData - Activities and awards data (can include showActivitiesAwards)
    * @returns {Promise} Updated portfolio data
    */
   async updateActivitiesAwards(activitiesData) {
@@ -152,11 +152,15 @@ export const portfolioService = {
   /**
    * Update affiliation
    * @param {string} affiliation - Affiliation
+   * @param {Object} options - Optional additional fields (e.g., showAffiliation)
    * @returns {Promise} Updated portfolio data
    */
-  async updateAffiliation(affiliation) {
+  async updateAffiliation(affiliation, options = {}) {
     try {
-      const response = await apiClient.patch(API_ENDPOINTS.PORTFOLIO.UPDATE_AFFILIATION, { affiliation })
+      const response = await apiClient.patch(API_ENDPOINTS.PORTFOLIO.UPDATE_AFFILIATION, { 
+        affiliation,
+        ...options
+      })
       return response.data
     } catch (error) {
       throw error

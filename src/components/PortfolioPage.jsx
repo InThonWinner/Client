@@ -16,6 +16,16 @@ function PortfolioPage() {
   const [projects, setProjects] = useState('')
   const [activitiesAwards, setActivitiesAwards] = useState('')
   
+  // Visibility states for each section
+  const [sectionVisibility, setSectionVisibility] = useState({
+    techStack: true,
+    career: true,
+    projects: true,
+    activitiesAwards: true,
+    contact: true,
+    affiliation: true
+  })
+  
   // Edit mode states for each section
   const [editingSection, setEditingSection] = useState(null)
   
@@ -83,6 +93,16 @@ function PortfolioPage() {
         setCareer(portfolio.career || '')
         setProjects(portfolio.projects || '')
         setActivitiesAwards(portfolio.activitiesAwards || portfolio.activities || '')
+        
+        // Load section visibility from portfolio - use showXxx fields from backend
+        setSectionVisibility({
+          techStack: portfolio.showTechStack !== false,
+          career: portfolio.showCareer !== false,
+          projects: portfolio.showProjects !== false,
+          activitiesAwards: portfolio.showActivitiesAwards !== false,
+          contact: portfolio.showContact !== false,
+          affiliation: portfolio.showAffiliation !== false
+        })
       }
     } catch (err) {
       console.error('[PortfolioPage] Error loading portfolio:', err)
@@ -138,7 +158,9 @@ function PortfolioPage() {
             alert('소속을 입력해주세요.')
             return
           }
-          response = await portfolioService.updateAffiliation(editValues.affiliation)
+          response = await portfolioService.updateAffiliation(editValues.affiliation, {
+            showAffiliation: sectionVisibility.affiliation
+          })
           break
         case 'contact':
           // Use editValues.contact if available, otherwise fallback to current contact state
@@ -164,7 +186,8 @@ function PortfolioPage() {
           }
           
           const contactData = {
-            contact: contactArray.length > 0 ? contactArray : null
+            contact: contactArray.length > 0 ? contactArray : null,
+            showContact: sectionVisibility.contact
           }
           console.log(`[PortfolioPage] Request body for contact (backend format):`, contactData)
           response = await portfolioService.updateContact(contactData)
@@ -172,23 +195,38 @@ function PortfolioPage() {
         case 'techStack':
           const techStackValue = editValues.techStack !== undefined ? editValues.techStack : techStack
           console.log(`[PortfolioPage] Updating techStack with value:`, techStackValue)
-          response = await portfolioService.updateTechStack({ techStack: techStackValue || '' })
+          response = await portfolioService.updateTechStack({ 
+            techStack: techStackValue || '',
+            showTechStack: sectionVisibility.techStack
+          })
           break
         case 'career':
           const careerValue = editValues.career !== undefined ? editValues.career : career
           console.log(`[PortfolioPage] Updating career with value:`, careerValue)
-          response = await portfolioService.updateCareer({ career: careerValue || '' })
+          response = await portfolioService.updateCareer({ 
+            career: careerValue || '',
+            showCareer: sectionVisibility.career
+          })
           break
         case 'projects':
           const projectsValue = editValues.projects !== undefined ? editValues.projects : projects
           console.log(`[PortfolioPage] Updating projects with value:`, projectsValue)
-          console.log(`[PortfolioPage] Request body:`, { projects: projectsValue || '' })
-          response = await portfolioService.updateProjects({ projects: projectsValue || '' })
+          console.log(`[PortfolioPage] Request body:`, { 
+            projects: projectsValue || '',
+            showProjects: sectionVisibility.projects
+          })
+          response = await portfolioService.updateProjects({ 
+            projects: projectsValue || '',
+            showProjects: sectionVisibility.projects
+          })
           break
         case 'activitiesAwards':
           const activitiesAwardsValue = editValues.activitiesAwards !== undefined ? editValues.activitiesAwards : activitiesAwards
           console.log(`[PortfolioPage] Updating activitiesAwards with value:`, activitiesAwardsValue)
-          response = await portfolioService.updateActivitiesAwards({ activitiesAwards: activitiesAwardsValue || '' })
+          response = await portfolioService.updateActivitiesAwards({ 
+            activitiesAwards: activitiesAwardsValue || '',
+            showActivitiesAwards: sectionVisibility.activitiesAwards
+          })
           break
         default:
           console.warn(`[PortfolioPage] Unknown section: ${section}`)
@@ -205,14 +243,88 @@ function PortfolioPage() {
       console.log(`[PortfolioPage] Successfully saved ${section}`)
     } catch (err) {
       console.error(`[PortfolioPage] Error saving ${section}:`, err)
-      console.error('[PortfolioPage] Error details:', {
-        message: err.message,
-        response: err.response?.data,
-        status: err.response?.status,
-        url: err.config?.url,
-        requestData: err.config?.data
-      })
-      alert(`저장에 실패했습니다: ${err.response?.data?.message || err.message || '알 수 없는 오류가 발생했습니다.'}`)
+      alert(`저장에 실패했습니다: ${err.message || '알 수 없는 오류'}`)
+    }
+  }
+
+  const handleToggleVisibility = async (section) => {
+    const newVisibility = !sectionVisibility[section]
+    setSectionVisibility(prev => ({
+      ...prev,
+      [section]: newVisibility
+    }))
+    
+    try {
+      // Map section names to backend showXxx field names
+      const sectionToShowField = {
+        'techStack': 'showTechStack',
+        'career': 'showCareer',
+        'projects': 'showProjects',
+        'activitiesAwards': 'showActivitiesAwards',
+        'contact': 'showContact',
+        'affiliation': 'showAffiliation'
+      }
+      
+      const showField = sectionToShowField[section]
+      if (!showField) {
+        console.error(`[PortfolioPage] Unknown section for visibility toggle: ${section}`)
+        return
+      }
+      
+      // Update visibility in backend using the appropriate endpoint
+      if (section === 'contact') {
+        // For contact, we need to preserve existing contact data
+        const contactValue = editValues.contact !== undefined ? editValues.contact : contact
+        const contactArray = []
+        if (contactValue?.email) {
+          contactArray.push({ type: 'email', value: contactValue.email })
+        }
+        if (contactValue?.phone) {
+          contactArray.push({ type: 'phone', value: contactValue.phone })
+        }
+        if (contactValue?.github) {
+          contactArray.push({ type: 'github', value: contactValue.github })
+        }
+        if (contactValue?.linkedin) {
+          contactArray.push({ type: 'linkedin', value: contactValue.linkedin })
+        }
+        await portfolioService.updateContact({ 
+          contact: contactArray.length > 0 ? contactArray : null,
+          [showField]: newVisibility 
+        })
+      } else if (section === 'affiliation') {
+        await portfolioService.updateAffiliation(affiliation, { [showField]: newVisibility })
+      } else if (section === 'techStack') {
+        await portfolioService.updateTechStack({ 
+          techStack: techStack || '',
+          [showField]: newVisibility 
+        })
+      } else if (section === 'career') {
+        await portfolioService.updateCareer({ 
+          career: career || '',
+          [showField]: newVisibility 
+        })
+      } else if (section === 'projects') {
+        await portfolioService.updateProjects({ 
+          projects: projects || '',
+          [showField]: newVisibility 
+        })
+      } else if (section === 'activitiesAwards') {
+        await portfolioService.updateActivitiesAwards({ 
+          activitiesAwards: activitiesAwards || '',
+          [showField]: newVisibility 
+        })
+      }
+      
+      console.log(`[PortfolioPage] Successfully toggled ${section} visibility to ${newVisibility}`)
+    } catch (err) {
+      console.error(`[PortfolioPage] Error toggling visibility for ${section}:`, err)
+      // Revert on error
+      setSectionVisibility(prev => ({
+        ...prev,
+        [section]: !newVisibility
+      }))
+      alert(`공개 설정 변경에 실패했습니다: ${err.message || '알 수 없는 오류'}`)
     }
   }
 
@@ -301,15 +413,25 @@ function PortfolioPage() {
             <div className="contact-section">
               <div className="contact-label-text">contact</div>
               <div className="contact-header">
-                {editingSection === 'contact' ? (
-                  <button className="section-save-btn" onClick={() => handleSaveSection('contact')}>
-                    Save
-                  </button>
-                ) : (
-                  <button className="section-edit-btn" onClick={() => handleEditSection('contact')}>
-                    Edit
-                  </button>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <label className="toggle-switch">
+                    <input 
+                      type="checkbox" 
+                      checked={sectionVisibility.contact}
+                      onChange={() => handleToggleVisibility('contact')}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                  {editingSection === 'contact' ? (
+                    <button className="section-save-btn" onClick={() => handleSaveSection('contact')}>
+                      Save
+                    </button>
+                  ) : (
+                    <button className="section-edit-btn" onClick={() => handleEditSection('contact')}>
+                      Edit
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="info-fields">
                 <input
@@ -359,15 +481,25 @@ function PortfolioPage() {
               <div className="section-card full-width">
                 <div className="section-header">
                   <h3 className="section-title">기술스택</h3>
-                  {editingSection === 'techStack' ? (
-                    <button className="section-save-btn" onClick={() => handleSaveSection('techStack')}>
-                      Save
-                    </button>
-                  ) : (
-                    <button className="section-edit-btn" onClick={() => handleEditSection('techStack')}>
-                      Edit
-                    </button>
-                  )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={sectionVisibility.techStack}
+                        onChange={() => handleToggleVisibility('techStack')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                    {editingSection === 'techStack' ? (
+                      <button className="section-save-btn" onClick={() => handleSaveSection('techStack')}>
+                        Save
+                      </button>
+                    ) : (
+                      <button className="section-edit-btn" onClick={() => handleEditSection('techStack')}>
+                        Edit
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div className="section-content">
                   {editingSection === 'techStack' ? (
@@ -387,15 +519,25 @@ function PortfolioPage() {
               <div className="section-card full-width">
                 <div className="section-header">
                   <h3 className="section-title">경력</h3>
-                  {editingSection === 'career' ? (
-                    <button className="section-save-btn" onClick={() => handleSaveSection('career')}>
-                      Save
-                    </button>
-                  ) : (
-                    <button className="section-edit-btn" onClick={() => handleEditSection('career')}>
-                      Edit
-                    </button>
-                  )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={sectionVisibility.career}
+                        onChange={() => handleToggleVisibility('career')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                    {editingSection === 'career' ? (
+                      <button className="section-save-btn" onClick={() => handleSaveSection('career')}>
+                        Save
+                      </button>
+                    ) : (
+                      <button className="section-edit-btn" onClick={() => handleEditSection('career')}>
+                        Edit
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div className="section-content">
                   {editingSection === 'career' ? (
@@ -417,15 +559,25 @@ function PortfolioPage() {
                 <div className="section-card">
                   <div className="section-header">
                     <h3 className="section-title">프로젝트</h3>
-                    {editingSection === 'projects' ? (
-                      <button className="section-save-btn" onClick={() => handleSaveSection('projects')}>
-                        Save
-                      </button>
-                    ) : (
-                      <button className="section-edit-btn" onClick={() => handleEditSection('projects')}>
-                        Edit
-                      </button>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label className="toggle-switch">
+                        <input 
+                          type="checkbox" 
+                          checked={sectionVisibility.projects}
+                          onChange={() => handleToggleVisibility('projects')}
+                        />
+                        <span className="toggle-slider"></span>
+                      </label>
+                      {editingSection === 'projects' ? (
+                        <button className="section-save-btn" onClick={() => handleSaveSection('projects')}>
+                          Save
+                        </button>
+                      ) : (
+                        <button className="section-edit-btn" onClick={() => handleEditSection('projects')}>
+                          Edit
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="section-content">
                     {editingSection === 'projects' ? (
@@ -445,15 +597,25 @@ function PortfolioPage() {
                 <div className="section-card">
                   <div className="section-header">
                     <h3 className="section-title">활동 및 수상 경력</h3>
-                    {editingSection === 'activitiesAwards' ? (
-                      <button className="section-save-btn" onClick={() => handleSaveSection('activitiesAwards')}>
-                        Save
-                      </button>
-                    ) : (
-                      <button className="section-edit-btn" onClick={() => handleEditSection('activitiesAwards')}>
-                        Edit
-                      </button>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label className="toggle-switch">
+                        <input 
+                          type="checkbox" 
+                          checked={sectionVisibility.activitiesAwards}
+                          onChange={() => handleToggleVisibility('activitiesAwards')}
+                        />
+                        <span className="toggle-slider"></span>
+                      </label>
+                      {editingSection === 'activitiesAwards' ? (
+                        <button className="section-save-btn" onClick={() => handleSaveSection('activitiesAwards')}>
+                          Save
+                        </button>
+                      ) : (
+                        <button className="section-edit-btn" onClick={() => handleEditSection('activitiesAwards')}>
+                          Edit
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="section-content">
                     {editingSection === 'activitiesAwards' ? (
