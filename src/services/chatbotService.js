@@ -120,31 +120,37 @@ export const chatbotService = {
 
   /**
    * Send message to a chat session
+   * Backend automatically saves user message, calls AI, and saves AI response
    * @param {string} sessionId - Session ID
-   * @param {string} message - Message content
-   * @returns {Promise} Response data
+   * @param {string} content - Message content
+   * @returns {Promise} Response with userMessage, assistantMessage, and sources
    */
-  async sendMessage(sessionId, message) {
+  async sendMessage(sessionId, content) {
     try {
-      console.log('chatbotService.sendMessage: Sending message to session:', sessionId)
+      console.log(`=== chatbotService.sendMessage: Sending message to session ===`)
+      console.log('Session ID:', sessionId)
       console.log('API endpoint:', API_ENDPOINTS.CHAT.SEND_MESSAGE(sessionId))
-      console.log('Message content:', message)
+      console.log('Message content (first 100 chars):', content.substring(0, 100))
       
-      // Try different possible request body formats
-      // Common formats: { message }, { content }, { text }, { message: content }
+      // Backend expects: { content: "..." }
+      // Backend automatically:
+      // 1. Saves user message with role: USER
+      // 2. Calls AI service
+      // 3. Saves AI response with role: ASSISTANT
+      // 4. Returns { userMessage, assistantMessage, sources }
       const requestBody = { 
-        message: message,
-        content: message  // Also send as content in case backend expects it
+        content: content
       }
-      console.log('Request body:', requestBody)
+      console.log('Request body:', JSON.stringify(requestBody, null, 2))
       
       const response = await apiClient.post(API_ENDPOINTS.CHAT.SEND_MESSAGE(sessionId), requestBody)
-      console.log('chatbotService.sendMessage: Response status:', response.status)
-      console.log('chatbotService.sendMessage: Response data:', response.data)
-      console.log('chatbotService.sendMessage: Full response:', JSON.stringify(response.data, null, 2))
+      console.log(`chatbotService.sendMessage: Response status:`, response.status)
+      console.log(`chatbotService.sendMessage: Response data:`, response.data)
+      
+      // Backend returns: { userMessage, assistantMessage, sources }
       return response.data
     } catch (error) {
-      console.error('chatbotService.sendMessage: Error:', error)
+      console.error(`chatbotService.sendMessage: Error sending message:`, error)
       console.error('Error details:', {
         message: error.message,
         response: error.response?.data,
@@ -157,19 +163,85 @@ export const chatbotService = {
   },
 
   /**
+   * Save a message to a chat session (legacy - kept for compatibility)
+   * Note: This method is deprecated. Use sendMessage instead.
+   * @deprecated Use sendMessage() instead - backend handles both user and assistant messages
+   */
+  async saveMessageToSession(sessionId, content, role = 'user') {
+    // If role is 'assistant', we can't save it directly
+    // Backend's sendMessage only accepts user messages and auto-saves assistant response
+    if (role === 'assistant') {
+      console.warn('chatbotService.saveMessageToSession: Cannot save assistant message directly. Backend auto-saves it when sending user message.')
+      return null
+    }
+    
+    // For user messages, use sendMessage (which handles everything)
+    return this.sendMessage(sessionId, content)
+  },
+
+
+  /**
    * Chat with AI (direct AI endpoint)
    * @param {string} message - User message
    * @param {Array} conversationHistory - Optional conversation history
+   * @param {string} sessionId - Optional session ID to save AI response automatically
    * @returns {Promise} AI response
    */
-  async chatWithAI(message, conversationHistory = []) {
+  async chatWithAI(message, conversationHistory = [], sessionId = null) {
     try {
-      const response = await apiClient.post(API_ENDPOINTS.AI.CHAT, {
-        message,
+      console.log('chatbotService.chatWithAI: Sending message to AI')
+      console.log('API endpoint:', API_ENDPOINTS.AI.CHAT)
+      console.log('Message:', message)
+      console.log('History length:', conversationHistory.length)
+      console.log('Session ID:', sessionId)
+      
+      // Backend expects 'question' field, not 'message'
+      // Also include sessionId if provided so backend can save assistant response automatically
+      const requestBody = {
+        question: message,  // Use 'question' instead of 'message'
         history: conversationHistory
-      })
+      }
+      
+      // Include sessionId if provided - backend might use this to save assistant response
+      if (sessionId) {
+        requestBody.sessionId = sessionId
+      }
+      
+      console.log('Request body:', requestBody)
+      
+      const response = await apiClient.post(API_ENDPOINTS.AI.CHAT, requestBody)
+      console.log('chatbotService.chatWithAI: Response status:', response.status)
+      console.log('chatbotService.chatWithAI: Response data:', response.data)
+      
+      // Extract AI response from various possible response formats
+      // Backend returns: { answer: "...", sources: [...] }
+      const aiResponse = response.data?.answer ||  // Primary: 'answer' field
+                         response.data?.response || 
+                         response.data?.message || 
+                         response.data?.content || 
+                         response.data?.text ||
+                         response.data?.data?.answer ||
+                         response.data?.data?.response ||
+                         response.data?.data?.message ||
+                         response.data
+      
+      console.log('chatbotService.chatWithAI: Extracted AI response:', aiResponse)
+      console.log('chatbotService.chatWithAI: Full response data:', response.data)
+      
+      // Return the answer string if found, otherwise return the full response
+      if (typeof aiResponse === 'string') {
+        return aiResponse
+      } else if (response.data?.answer) {
+        return response.data.answer
+      }
       return response.data
     } catch (error) {
+      console.error('chatbotService.chatWithAI: Error:', error)
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
       throw error
     }
   }

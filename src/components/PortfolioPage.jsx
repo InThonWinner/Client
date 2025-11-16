@@ -29,23 +29,63 @@ function PortfolioPage() {
 
   const loadPortfolio = async () => {
     try {
+      console.log('[PortfolioPage] Loading portfolio...')
       const portfolio = await portfolioService.getMyPortfolio()
+      console.log('[PortfolioPage] Received portfolio:', portfolio)
       if (portfolio) {
         setDisplayName(portfolio.displayName || portfolio.name || '김호이')
         setAffiliation(portfolio.affiliation || 'SK telecom')
-        setContact({
-          email: portfolio.email || portfolio.contact?.email || '',
-          phone: portfolio.phone || portfolio.contact?.phone || '',
-          github: portfolio.github || portfolio.contact?.github || '',
-          linkedin: portfolio.linkedin || portfolio.contact?.linkedin || ''
-        })
+        
+        // Parse contact - Backend returns contact as array of { type: string, value: string } objects
+        // Convert to our flat object format for UI
+        const contactData = {
+          email: '',
+          phone: '',
+          github: '',
+          linkedin: ''
+        }
+        
+        if (portfolio.contact && Array.isArray(portfolio.contact)) {
+          // Backend returns contact as array
+          portfolio.contact.forEach((item) => {
+            if (item && item.type && item.value) {
+              const type = item.type.toLowerCase()
+              if (type === 'email') {
+                contactData.email = item.value
+              } else if (type === 'phone') {
+                contactData.phone = item.value
+              } else if (type === 'github') {
+                contactData.github = item.value
+              } else if (type === 'linkedin') {
+                contactData.linkedin = item.value
+              }
+            }
+          })
+        } else if (portfolio.contact && typeof portfolio.contact === 'object') {
+          // Fallback: handle if backend returns as object (legacy format)
+          contactData.email = portfolio.contact.email || portfolio.email || ''
+          contactData.phone = portfolio.contact.phone || portfolio.phone || ''
+          contactData.github = portfolio.contact.github || portfolio.github || ''
+          contactData.linkedin = portfolio.contact.linkedin || portfolio.linkedin || ''
+        } else {
+          // Fallback: try flat fields
+          contactData.email = portfolio.email || ''
+          contactData.phone = portfolio.phone || ''
+          contactData.github = portfolio.github || ''
+          contactData.linkedin = portfolio.linkedin || ''
+        }
+        
+        console.log('[PortfolioPage] Parsed contact data:', contactData)
+        console.log('[PortfolioPage] Original portfolio.contact:', portfolio.contact)
+        setContact(contactData)
+        
         setTechStack(portfolio.techStack || '')
         setCareer(portfolio.career || '')
         setProjects(portfolio.projects || '')
         setActivitiesAwards(portfolio.activitiesAwards || portfolio.activities || '')
       }
     } catch (err) {
-      console.error('Error loading portfolio:', err)
+      console.error('[PortfolioPage] Error loading portfolio:', err)
       // Keep default values if portfolio doesn't exist
     }
   }
@@ -61,6 +101,8 @@ function PortfolioPage() {
       projects,
       activitiesAwards
     }
+    console.log(`[PortfolioPage] Starting edit for ${section}`)
+    console.log(`[PortfolioPage] Current values:`, currentValues)
     setEditValues(currentValues)
     setEditingSection(section)
   }
@@ -72,7 +114,15 @@ function PortfolioPage() {
 
   const handleSaveSection = async (section) => {
     try {
-      console.log(`Saving ${section} with values:`, editValues[section])
+      console.log(`[PortfolioPage] Saving ${section}`)
+      console.log(`[PortfolioPage] editValues:`, editValues)
+      console.log(`[PortfolioPage] editValues[${section}]:`, editValues[section])
+      console.log(`[PortfolioPage] Current state for ${section}:`, {
+        projects,
+        techStack,
+        career,
+        activitiesAwards
+      })
       
       let response
       switch (section) {
@@ -91,63 +141,103 @@ function PortfolioPage() {
           response = await portfolioService.updateAffiliation(editValues.affiliation)
           break
         case 'contact':
-          if (!editValues.contact) {
-            alert('연락처 정보를 입력해주세요.')
-            return
+          // Use editValues.contact if available, otherwise fallback to current contact state
+          const contactValue = editValues.contact !== undefined ? editValues.contact : contact
+          console.log(`[PortfolioPage] Updating contact with value:`, contactValue)
+          console.log(`[PortfolioPage] editValues.contact:`, editValues.contact)
+          console.log(`[PortfolioPage] current contact state:`, contact)
+          
+          // Backend expects contact as array of { type: string, value: string } objects
+          // Convert our flat object format to backend's array format
+          const contactArray = []
+          if (contactValue?.email) {
+            contactArray.push({ type: 'email', value: contactValue.email })
           }
-          response = await portfolioService.updateContact(editValues.contact)
+          if (contactValue?.phone) {
+            contactArray.push({ type: 'phone', value: contactValue.phone })
+          }
+          if (contactValue?.github) {
+            contactArray.push({ type: 'github', value: contactValue.github })
+          }
+          if (contactValue?.linkedin) {
+            contactArray.push({ type: 'linkedin', value: contactValue.linkedin })
+          }
+          
+          const contactData = {
+            contact: contactArray.length > 0 ? contactArray : null
+          }
+          console.log(`[PortfolioPage] Request body for contact (backend format):`, contactData)
+          response = await portfolioService.updateContact(contactData)
           break
         case 'techStack':
-          response = await portfolioService.updateTechStack({ techStack: editValues.techStack || '' })
+          const techStackValue = editValues.techStack !== undefined ? editValues.techStack : techStack
+          console.log(`[PortfolioPage] Updating techStack with value:`, techStackValue)
+          response = await portfolioService.updateTechStack({ techStack: techStackValue || '' })
           break
         case 'career':
-          response = await portfolioService.updateCareer({ career: editValues.career || '' })
+          const careerValue = editValues.career !== undefined ? editValues.career : career
+          console.log(`[PortfolioPage] Updating career with value:`, careerValue)
+          response = await portfolioService.updateCareer({ career: careerValue || '' })
           break
         case 'projects':
-          response = await portfolioService.updateProjects({ projects: editValues.projects || '' })
+          const projectsValue = editValues.projects !== undefined ? editValues.projects : projects
+          console.log(`[PortfolioPage] Updating projects with value:`, projectsValue)
+          console.log(`[PortfolioPage] Request body:`, { projects: projectsValue || '' })
+          response = await portfolioService.updateProjects({ projects: projectsValue || '' })
           break
         case 'activitiesAwards':
-          response = await portfolioService.updateActivitiesAwards({ activitiesAwards: editValues.activitiesAwards || '' })
+          const activitiesAwardsValue = editValues.activitiesAwards !== undefined ? editValues.activitiesAwards : activitiesAwards
+          console.log(`[PortfolioPage] Updating activitiesAwards with value:`, activitiesAwardsValue)
+          response = await portfolioService.updateActivitiesAwards({ activitiesAwards: activitiesAwardsValue || '' })
           break
         default:
+          console.warn(`[PortfolioPage] Unknown section: ${section}`)
           return
       }
       
-      console.log(`Save response for ${section}:`, response)
+      console.log(`[PortfolioPage] Save response for ${section}:`, response)
       
       // 저장 성공 후 전체 포트폴리오 다시 로드
       await loadPortfolio()
       
       setEditingSection(null)
       setEditValues({})
+      console.log(`[PortfolioPage] Successfully saved ${section}`)
     } catch (err) {
-      console.error(`Error saving ${section}:`, err)
-      console.error('Error details:', {
+      console.error(`[PortfolioPage] Error saving ${section}:`, err)
+      console.error('[PortfolioPage] Error details:', {
         message: err.message,
         response: err.response?.data,
-        status: err.response?.status
+        status: err.response?.status,
+        url: err.config?.url,
+        requestData: err.config?.data
       })
-      alert(`저장에 실패했습니다: ${err.userMessage || err.message || '알 수 없는 오류가 발생했습니다.'}`)
+      alert(`저장에 실패했습니다: ${err.response?.data?.message || err.message || '알 수 없는 오류가 발생했습니다.'}`)
     }
   }
 
   const handleEditValueChange = (section, field, value) => {
+    console.log(`[PortfolioPage] Editing ${section}${field ? `.${field}` : ''} with value:`, value)
     setEditValues(prev => {
       if (field) {
         // Nested field (e.g., contact.email)
-        return {
+        const updated = {
           ...prev,
           [section]: {
             ...(prev[section] || {}),
             [field]: value
           }
         }
+        console.log(`[PortfolioPage] Updated editValues (nested):`, updated)
+        return updated
       } else {
         // Direct field
-        return {
+        const updated = {
           ...prev,
           [section]: value
         }
+        console.log(`[PortfolioPage] Updated editValues (direct):`, updated)
+        return updated
       }
     })
   }

@@ -13,56 +13,80 @@ function ChatbotPage() {
   const [sessions, setSessions] = useState([])
   const [isChatHistoryOpen, setIsChatHistoryOpen] = useState(true)
   const messagesEndRef = useRef(null)
+  const messagesContainerRef = useRef(null)
+  const shouldAutoScrollRef = useRef(true) // Track if we should auto-scroll
+  const lastMessageCountRef = useRef(0) // Track message count to detect new messages
 
   useEffect(() => {
     setOpacity(1)
     initializeChat()
   }, [])
 
+  // Check if user is near the bottom of the chat
+  const isNearBottom = () => {
+    const container = messagesContainerRef.current
+    if (!container) return true
+    
+    // Check if user is within 150px of the bottom
+    const threshold = 150
+    const scrollTop = container.scrollTop
+    const scrollHeight = container.scrollHeight
+    const clientHeight = container.clientHeight
+    
+    return scrollHeight - scrollTop - clientHeight < threshold
+  }
+
+  // Handle scroll event to detect if user scrolled up
+  const handleScroll = () => {
+    shouldAutoScrollRef.current = isNearBottom()
+  }
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    // Only auto-scroll if:
+    // 1. User is near the bottom (or hasn't scrolled)
+    // 2. New messages were actually added (not just session list update)
+    const hasNewMessages = messages.length > lastMessageCountRef.current
+    
+    if (shouldAutoScrollRef.current && hasNewMessages) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    }
+    
+    // Update message count
+    lastMessageCountRef.current = messages.length
   }, [messages])
 
   const initializeChat = async () => {
     try {
       console.log('ChatbotPage: Initializing chat...')
-      // Load all sessions for sidebar
+      // Start with empty messages - don't auto-load any session
+      setMessages([])
+      setSessionId(null)
+      
+      // Load all sessions for sidebar only (don't load messages)
       const allSessions = await chatbotService.getSessions()
       console.log('ChatbotPage: Received sessions:', allSessions)
       
       if (allSessions && Array.isArray(allSessions) && allSessions.length > 0) {
-        setSessions(allSessions)
-        // Use the most recent session
-        const latestSession = allSessions[0]
-        const id = latestSession.id || latestSession._id || latestSession.sessionId
-        console.log('ChatbotPage: Using existing session:', id)
-        if (id) {
-          setSessionId(id)
-          await loadMessages(id)
-          return
-        }
+        // Sort sessions: newest first
+        const sortedSessions = [...allSessions].sort((a, b) => {
+          if (a.createdAt && b.createdAt) {
+            return new Date(b.createdAt) - new Date(a.createdAt)
+          }
+          return 0
+        })
+        setSessions(sortedSessions)
+        console.log('ChatbotPage: Loaded sessions for sidebar, starting with empty chat')
       } else if (allSessions && !Array.isArray(allSessions) && allSessions) {
         // Handle single session object
         setSessions([allSessions])
-        const id = allSessions.id || allSessions._id || allSessions.sessionId
-        console.log('ChatbotPage: Using single session:', id)
-        if (id) {
-          setSessionId(id)
-          await loadMessages(id)
-          return
-        }
-      }
-      // If no sessions exist, create a new one
-      console.log('ChatbotPage: No existing sessions, creating new one...')
-      const newSession = await chatbotService.createSession()
-      console.log('ChatbotPage: Created new session:', newSession)
-      const id = newSession.id || newSession._id || newSession.sessionId || newSession.data?.id
-      if (id) {
-        setSessionId(id)
-        setSessions([newSession])
-        console.log('ChatbotPage: New session initialized with id:', id)
+        console.log('ChatbotPage: Loaded single session for sidebar, starting with empty chat')
       } else {
-        console.warn('ChatbotPage: New session created but no ID found:', newSession)
+        // No sessions exist - start with empty state
+        setSessions([])
+        console.log('ChatbotPage: No existing sessions, starting with empty chat')
       }
     } catch (err) {
       console.error('ChatbotPage: Error initializing chat:', err)
@@ -71,14 +95,69 @@ function ChatbotPage() {
         response: err.response?.data,
         status: err.response?.status
       })
-      // Fallback: use direct AI chat if session-based fails
+      // Start with empty state even if loading sessions fails
+      setMessages([])
+      setSessions([])
+    }
+  }
+
+  const handleNewChat = async () => {
+    try {
+      console.log('ChatbotPage: Starting new chat...')
+      // Clear current messages first
+      setMessages([])
+      setSessionId(null)
+      // Reset auto-scroll for new chat
+      shouldAutoScrollRef.current = true
+      lastMessageCountRef.current = 0
+      
+      // Create new session
+      const newSession = await chatbotService.createSession()
+      console.log('ChatbotPage: Created new session:', newSession)
+      const id = newSession.id || newSession._id || newSession.sessionId || newSession.data?.id
+      
+      if (id) {
+        setSessionId(id)
+        // Refresh sessions list and put new session at the top
+        const updatedSessions = await chatbotService.getSessions()
+        if (updatedSessions && Array.isArray(updatedSessions)) {
+          // Sort sessions: newest first (by createdAt or id)
+          const sortedSessions = [...updatedSessions].sort((a, b) => {
+            // Try to sort by createdAt (newest first)
+            if (a.createdAt && b.createdAt) {
+              return new Date(b.createdAt) - new Date(a.createdAt)
+            }
+            // If no createdAt, put the new session (with matching id) first
+            if (a.id === id || a._id === id || a.sessionId === id) return -1
+            if (b.id === id || b._id === id || b.sessionId === id) return 1
+            return 0
+          })
+          setSessions(sortedSessions)
+        } else {
+          // If no sessions list, just use the new session
+          setSessions([newSession])
+        }
+        // Ensure messages are empty (don't load any messages for new session)
+        setMessages([])
+        console.log('ChatbotPage: New chat started with empty screen, session:', id)
+      } else {
+        throw new Error('Failed to create new session')
+      }
+    } catch (err) {
+      console.error('ChatbotPage: Error starting new chat:', err)
+      alert('새 채팅을 시작하는데 실패했습니다. 다시 시도해주세요.')
+      // Ensure messages are cleared even on error
+      setMessages([])
     }
   }
 
   const handleSessionClick = async (session) => {
     const id = session.id || session._id || session.sessionId
     if (id) {
+      console.log('ChatbotPage: Loading session:', id)
       setSessionId(id)
+      // Enable auto-scroll when switching sessions
+      shouldAutoScrollRef.current = true
       await loadMessages(id)
     }
   }
@@ -91,23 +170,50 @@ function ChatbotPage() {
       
       if (sessionMessages && sessionMessages.length > 0) {
         // Transform API messages to component format
+        // Use server message IDs to ensure uniqueness and replace temporary messages
         const formattedMessages = sessionMessages.map((msg, index) => {
-          // Determine sender
-          let sender = 'KUnnect'
-          if (msg.role === 'user' || msg.role === 'USER' || msg.sender === 'user' || msg.sender === 'User') {
+          // Log raw message for debugging
+          console.log(`Message ${index}:`, {
+            id: msg.id || msg._id,
+            role: msg.role,
+            sender: msg.sender,
+            content: msg.content || msg.message || msg.text
+          })
+          
+          // Determine sender based on role (case-insensitive)
+          // Backend returns role as 'USER' or 'ASSISTANT' (uppercase)
+          let sender = 'KUnnect' // Default to assistant
+          const role = (msg.role || '').toLowerCase()
+          const msgSender = (msg.sender || '').toLowerCase()
+          
+          console.log(`  Parsing role: "${msg.role}" -> lowercase: "${role}"`)
+          
+          if (role === 'user') {
             sender = 'User'
-          } else if (msg.role === 'assistant' || msg.role === 'ASSISTANT' || msg.sender === 'assistant' || msg.sender === 'bot') {
+            console.log(`  -> Determined as User`)
+          } else if (role === 'assistant') {
+            sender = 'KUnnect'
+            console.log(`  -> Determined as KUnnect (assistant)`)
+          } else {
+            // If role is not clear, log warning and default to assistant
+            console.warn(`  -> Message ${index} has unclear role: "${msg.role}", defaulting to KUnnect`)
             sender = 'KUnnect'
           }
           
+          // Use server message ID - ensure it's unique and not a temporary ID
+          const messageId = msg.id || msg._id
+          if (!messageId) {
+            console.warn(`Message ${index} has no ID, generating fallback ID`)
+          }
+          
           return {
-            id: msg.id || msg._id || `msg-${index}`,
+            id: messageId || `server-msg-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 9)}`,
             sender: sender,
             text: msg.content || msg.message || msg.text || '',
             avatar: sender === 'User' ? '/images/profile.png' : undefined
           }
         })
-        console.log('ChatbotPage: Formatted messages:', formattedMessages)
+        console.log('ChatbotPage: Formatted messages with roles:', formattedMessages.map(m => ({ sender: m.sender, text: m.text.substring(0, 50) + '...' })))
         setMessages(formattedMessages)
       } else {
         console.log('ChatbotPage: No messages found for session')
@@ -131,14 +237,18 @@ function ChatbotPage() {
     setInputMessage('')
     setIsLoading(true)
 
+    // Generate unique temporary IDs for optimistic UI updates
+    const tempUserMessageId = `temp-user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    const tempLoadingMessageId = `temp-loading-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    
     // Add loading message
     const loadingMessage = {
-      id: Date.now() + 1,
+      id: tempLoadingMessageId,
       sender: 'KUnnect',
       text: '답변을 준비 중입니다...'
     }
     setMessages(prev => [...prev, {
-      id: Date.now(),
+      id: tempUserMessageId,
       sender: 'User',
       text: currentInput,
       avatar: '/images/profile.png'
@@ -163,51 +273,28 @@ function ChatbotPage() {
         }
       }
 
-      // Send message via session
-      console.log('ChatbotPage: Sending message via session:', currentSessionId)
-      const response = await chatbotService.sendMessage(currentSessionId, currentInput)
-      console.log('ChatbotPage: Received response from session:', response)
-      
-      // Wait a bit for server to process and save the message
-      // Then reload messages from server to get the complete conversation history
-      console.log('ChatbotPage: Waiting for server to save message...')
-      await new Promise(resolve => setTimeout(resolve, 500)) // 500ms delay
-      
-      console.log('ChatbotPage: Reloading messages from server...')
-      // Retry loading messages up to 3 times in case server needs more time
-      let retries = 3
-      let loadedMessages = []
-      while (retries > 0) {
-        try {
-          loadedMessages = await chatbotService.getMessages(currentSessionId)
-          console.log(`ChatbotPage: Loaded messages (attempt ${4 - retries}):`, loadedMessages)
-          
-          // Check if our message is in the loaded messages
-          const hasUserMessage = loadedMessages.some(msg => {
-            const content = msg.content || msg.message || msg.text || ''
-            return content.trim() === currentInput.trim()
-          })
-          
-          if (hasUserMessage || loadedMessages.length > 0) {
-            console.log('ChatbotPage: Messages found, stopping retry')
-            break
-          }
-          
-          retries--
-          if (retries > 0) {
-            console.log(`ChatbotPage: Message not found yet, retrying in 500ms... (${retries} retries left)`)
-            await new Promise(resolve => setTimeout(resolve, 500))
-          }
-        } catch (loadErr) {
-          console.error('ChatbotPage: Error loading messages:', loadErr)
-          retries--
-          if (retries > 0) {
-            await new Promise(resolve => setTimeout(resolve, 500))
-          }
-        }
+      // Step 1: Send user message to backend
+      // Backend automatically:
+      // 1. Saves user message with role: USER
+      // 2. Calls AI service
+      // 3. Saves AI response with role: ASSISTANT
+      // 4. Returns { userMessage, assistantMessage, sources }
+      console.log('ChatbotPage: Step 1 - Sending message to backend (auto-handles AI):', currentSessionId)
+      let sendResult
+      try {
+        sendResult = await chatbotService.sendMessage(currentSessionId, currentInput)
+        console.log('ChatbotPage: Backend response:', sendResult)
+        console.log('ChatbotPage: User message saved:', sendResult?.userMessage)
+        console.log('ChatbotPage: Assistant message saved:', sendResult?.assistantMessage)
+      } catch (sendErr) {
+        console.error('ChatbotPage: Failed to send message:', sendErr)
+        throw new Error('메시지를 전송하는데 실패했습니다.')
       }
-      
-      // Update messages with server data
+
+      // Step 5: Reload all messages from server to get updated conversation
+      console.log('ChatbotPage: Step 5 - Reloading messages from server...')
+      // Enable auto-scroll when new message is sent
+      shouldAutoScrollRef.current = true
       await loadMessages(currentSessionId)
       
       // Also refresh sessions list to get updated session info
@@ -221,21 +308,62 @@ function ChatbotPage() {
       }
       
     } catch (err) {
-      // Remove loading message and add error message
+      // Remove loading message
       setMessages(prev => {
         const withoutLoading = prev.filter(msg => msg.id !== loadingMessage.id)
+        
+        // Determine error message based on error type
+        let errorMessage = '죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.'
+        
+        if (err.response) {
+          // Server responded with error
+          const status = err.response.status
+          const errorData = err.response.data
+          
+          if (status === 401) {
+            errorMessage = '인증이 필요합니다. 다시 로그인해주세요.'
+          } else if (status === 404) {
+            errorMessage = '서비스를 찾을 수 없습니다. 서버를 확인해주세요.'
+          } else if (status === 500) {
+            errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+          } else if (errorData?.message) {
+            errorMessage = errorData.message
+          } else if (errorData?.error) {
+            errorMessage = errorData.error
+          }
+        } else if (err.message) {
+          // Network error or other error
+          if (err.message.includes('Network') || err.message.includes('network')) {
+            errorMessage = '서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.'
+          } else {
+            errorMessage = err.message
+          }
+        }
+        
         return [...withoutLoading, {
-          id: Date.now() + 2,
+          id: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           sender: 'KUnnect',
-          text: '죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.'
+          text: errorMessage
         }]
       })
+      
       console.error('ChatbotPage: Error sending message:', err)
       console.error('Error details:', {
         message: err.message,
         response: err.response?.data,
-        status: err.response?.status
+        status: err.response?.status,
+        url: err.config?.url,
+        method: err.config?.method
       })
+      
+      // Try to reload messages to show at least the user message if it was saved
+      if (sessionId) {
+        try {
+          await loadMessages(sessionId)
+        } catch (loadErr) {
+          console.error('ChatbotPage: Failed to reload messages after error:', loadErr)
+        }
+      }
     } finally {
       setIsLoading(false)
     }
@@ -257,6 +385,16 @@ function ChatbotPage() {
               </svg>
             </button>
           </div>
+          <button 
+            className="new-chat-button"
+            onClick={handleNewChat}
+            title="새 채팅 시작"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            새 채팅
+          </button>
         </div>
         {isChatHistoryOpen && (
           <div className="sidebar-sessions">
@@ -295,7 +433,11 @@ function ChatbotPage() {
         </div>
 
         {/* Chat Messages */}
-        <div className="chat-messages-container">
+        <div 
+          className="chat-messages-container"
+          ref={messagesContainerRef}
+          onScroll={handleScroll}
+        >
           <div className="chat-messages">
             {messages.length === 0 ? (
               <div className="empty-state">

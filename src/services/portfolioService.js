@@ -78,9 +78,20 @@ export const portfolioService = {
    */
   async updateProjects(projectsData) {
     try {
+      console.log('[portfolioService] updateProjects called with:', projectsData)
+      console.log('[portfolioService] API endpoint:', API_ENDPOINTS.PORTFOLIO.UPDATE_PROJECTS)
       const response = await apiClient.patch(API_ENDPOINTS.PORTFOLIO.UPDATE_PROJECTS, projectsData)
+      console.log('[portfolioService] updateProjects response:', response.data)
       return response.data
     } catch (error) {
+      console.error('[portfolioService] updateProjects error:', error)
+      console.error('[portfolioService] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url,
+        requestData: error.config?.data
+      })
       throw error
     }
   },
@@ -120,9 +131,20 @@ export const portfolioService = {
    */
   async updateContact(contactData) {
     try {
+      console.log('[portfolioService] updateContact called with:', contactData)
+      console.log('[portfolioService] API endpoint:', API_ENDPOINTS.PORTFOLIO.UPDATE_CONTACT)
       const response = await apiClient.patch(API_ENDPOINTS.PORTFOLIO.UPDATE_CONTACT, contactData)
+      console.log('[portfolioService] updateContact response:', response.data)
       return response.data
     } catch (error) {
+      console.error('[portfolioService] updateContact error:', error)
+      console.error('[portfolioService] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url,
+        requestData: error.config?.data
+      })
       throw error
     }
   },
