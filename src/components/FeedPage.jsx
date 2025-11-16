@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AiFillCaretDown } from 'react-icons/ai'
 import { feedService } from '../services'
 import './FeedPage.css'
 
@@ -100,13 +101,13 @@ function FeedPage() {
       <div className="filter-section">
         <div className="filter-dropdown-wrapper">
           <button 
-            className="filter-dropdown"
+            className={`filter-dropdown ${isDropdownOpen ? 'open' : ''}`}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
             <span className="filter-label">
               {categoryOptions.find(opt => opt.value === selectedCategory)?.label || '글 유형'}
             </span>
-            <span className="dropdown-indicator">􀆈</span>
+            <AiFillCaretDown className="dropdown-indicator" />
           </button>
           {isDropdownOpen && (
             <div className="dropdown-menu">
